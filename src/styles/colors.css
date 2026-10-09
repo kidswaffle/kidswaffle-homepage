@@ -1,0 +1,76 @@
+/* KIDSWAFFLE color system — base values then semantic aliases */
+:root{
+  /* Brand orange — from the brand colour guide */
+  --kw-orange:#FF5800;              /* CTA, logo point, key-word highlight */
+  --kw-orange-ink:#C75300;          /* accessible orange for small text/links */
+  --kw-orange-press:#B84A00;
+  --kw-orange-tint:#FFE7D6;         /* wash behind orange icons/badges */
+
+  /* Surfaces */
+  --kw-cream:#FFF7EC;               /* page background */
+  --kw-cream-deep:#FDEFDD;          /* alternating band */
+  --kw-white:#FFFFFF;
+  --kw-waffle:#FFE3B0;              /* waffle beige card */
+  --kw-waffle-deep:#F6CE8C;
+  --kw-ink-surface:#241A14;         /* dark section (events / video) */
+  --kw-ink-surface-2:#33251C;
+
+  /* Character colours — the four KIDSWAFFLE characters */
+  --kw-yellow:#FBC54B;              /* 와플이 Waple */
+  --kw-yellow-tint:#FFF0CC;
+  --kw-coral:#EE8383;               /* 두근이 Dugeuni */
+  --kw-coral-tint:#FBDDDB;
+  --kw-cloud:#FFF4E2;               /* 몽글이 Mongle body cream */
+  --kw-sky:#7FB3E0;                 /* 몽글이 overalls blue */
+  --kw-sky-tint:#DCEBF8;
+  --kw-green:#8DBF57;               /* 또또 Ttoto */
+  --kw-green-tint:#E4F0D3;
+
+  /* Support accents */
+  --kw-mint:#9FDCC4;
+  --kw-mint-tint:#E3F5EE;
+
+  /* Warm ink ramp */
+  --kw-ink-900:#2E211A;
+  --kw-ink-700:#574538;
+  --kw-ink-500:#8A7767;
+  --kw-ink-300:#C4B5A6;
+  --kw-ink-200:#E3D6C6;
+  --kw-line:#F0E2CE;
+  --kw-line-strong:#E0CDB2;
+
+  /* Semantic status */
+  --kw-success:#5FA83C;
+  --kw-warning:#E8A317;
+  --kw-danger:#D6453C;
+  --kw-info:#4A90C7;
+
+  /* ── Semantic aliases (use these in components) ── */
+  --text-strong:var(--kw-ink-900);
+  --text-body:var(--kw-ink-700);
+  --text-muted:var(--kw-ink-500);
+  --text-faint:var(--kw-ink-300);
+  --text-brand:var(--kw-orange-ink);
+  --text-on-brand:#FFFFFF;
+  --text-on-dark:#FFF7EC;
+  --text-on-dark-muted:#B7A798;
+
+  --surface-page:var(--kw-cream);
+  --surface-band:var(--kw-cream-deep);
+  --surface-card:var(--kw-white);
+  --surface-card-alt:var(--kw-waffle);
+  --surface-dark:var(--kw-ink-surface);
+  --surface-dark-raised:var(--kw-ink-surface-2);
+  --surface-input:#FFFFFF;
+
+  --border-subtle:var(--kw-line);
+  --border-strong:var(--kw-line-strong);
+  --border-dark:rgba(255,247,236,.14);
+
+  --brand:var(--kw-orange);
+  --brand-hover:#E64F00;
+  --brand-press:var(--kw-orange-press);
+  --brand-wash:var(--kw-orange-tint);
+
+  --focus-ring:0 0 0 3px rgba(255,88,0,.32);
+}

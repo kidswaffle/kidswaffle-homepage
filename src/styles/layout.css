@@ -1,0 +1,35 @@
+/* KIDSWAFFLE spacing, radii, shadows, motion, layout */
+:root{
+  --space-1:2px; --space-2:4px; --space-3:6px; --space-4:8px; --space-5:12px;
+  --space-6:16px; --space-7:20px; --space-8:24px; --space-9:32px; --space-10:40px;
+  --space-11:48px; --space-12:64px; --space-13:80px; --space-14:96px; --space-15:120px;
+
+  --radius-xs:8px; --radius-sm:12px; --radius-md:16px; --radius-lg:24px;
+  --radius-xl:32px; --radius-2xl:40px; --radius-pill:999px;
+
+  --shadow-card:0 1px 2px rgba(46,33,26,.04),0 8px 24px rgba(46,33,26,.06);
+  --shadow-lift:0 2px 4px rgba(46,33,26,.05),0 16px 40px rgba(46,33,26,.10);
+  --shadow-nav:0 6px 24px rgba(46,33,26,.08);
+  --shadow-inset:inset 0 2px 4px rgba(46,33,26,.10);
+  --shadow-cta:0 6px 18px rgba(255,88,0,.28);
+
+  --ease-out:cubic-bezier(.22,.8,.32,1); /* @kind other */
+  --ease-in-out:cubic-bezier(.5,0,.5,1); /* @kind other */
+  --ease-bounce:cubic-bezier(.34,1.4,.5,1); /* @kind other */
+  --dur-1:120ms; /* @kind other */
+  --dur-2:200ms; /* @kind other */
+  --dur-3:320ms; /* @kind other */
+  --dur-4:520ms; /* @kind other */
+  --cycle-verb:3200ms; /* @kind other */
+  --cycle-blob:11s; /* @kind other */
+  --cycle-bob:5.2s; /* @kind other */
+  --cycle-bob-chip:6.8s; /* @kind other */
+  --cycle-nudge:2.4s; /* @kind other */
+
+  --container:1240px;
+  --container-narrow:860px;
+  --gutter:32px;
+  --section-y:120px;
+  --section-y-sm:72px;
+}
+@media (max-width:760px){:root{--gutter:20px;--section-y:72px;--section-y-sm:48px}}
