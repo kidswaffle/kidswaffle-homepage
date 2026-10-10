@@ -28,3 +28,9 @@ html{scroll-behavior:smooth}
   .kw-footer footer>div>div:first-child{grid-template-columns:1fr 1fr!important;gap:36px 24px!important;padding-bottom:40px!important}
   .kw-footer footer>div>div:first-child>div:first-child{grid-column:1/-1}
 }
+
+/* Inline video player: our control bar shows only while the pointer is over the video */
+.kw-player-bar{opacity:0;transition:opacity var(--dur-3) var(--ease-out)}
+.kw-player:hover .kw-player-bar,.kw-player:fullscreen .kw-player-bar{opacity:1}
+.kw-player:fullscreen{aspect-ratio:auto!important}
+@media (hover:none){.kw-player-bar{opacity:1}}
