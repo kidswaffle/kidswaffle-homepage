@@ -18,7 +18,12 @@ html{scroll-behavior:smooth}
 /* Phone layout helpers */
 .kw-rail{scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .kw-rail::-webkit-scrollbar{display:none}
-.kw-rail>*{scroll-snap-align:start}
+.kw-rail>*{scroll-snap-align:var(--kw-snap,start)}
+/* Phone curriculum tabs: all four visible at once as a 2x2 pill grid */
+.kw-mtabs{margin:0}
+.kw-mtabs>div{display:grid!important;grid-template-columns:1fr 1fr;width:100%!important;border-radius:28px!important}
+.kw-mtabs button{justify-content:center;padding:0 6px!important;height:46px!important;white-space:nowrap}
+
 @media (max-width:760px){
   .kw-footer footer>div>div:first-child{grid-template-columns:1fr 1fr!important;gap:36px 24px!important;padding-bottom:40px!important}
   .kw-footer footer>div>div:first-child>div:first-child{grid-column:1/-1}

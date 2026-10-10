@@ -6,7 +6,6 @@ import { ProgramCard } from '../components/marketing/ProgramCard.jsx';
 import { Card } from '../components/core/Card.jsx';
 import { Chip } from '../components/core/Chip.jsx';
 import { Icon } from '../components/core/Icon.jsx';
-import { Rail } from './Mobile.jsx';
 import { useIsMobile } from '../lib.js';
 import stepWaple from '../assets/characters/step-waple.webp';
 import stepMongle from '../assets/characters/step-mongle.webp';
@@ -88,23 +87,24 @@ export function Curriculum() {
   const [tab, setTab] = React.useState(STEPS[0].label);
   const s = STEPS.find((x) => x.label === tab);
   const header = (
-    <SectionHeader align="center" label="오감놀이 커리큘럼" title="인사로 열고 정리로 닫는, 7가지 순서"
+    <SectionHeader align="center" label="오감놀이 커리큘럼" title="인사로 열고 정리로 닫는 수업 흐름"
       lead="키즈와플 오감팡팡은 매 수업 같은 순서로 진행합니다. 익숙한 순서 안에서 아이는 다음 활동을 예상하며 편안하게 참여할 수 있어요." />
   );
-  const tabs = <SegmentedTabs style={{ width: 'max-content' }} value={tab} onChange={setTab} items={STEPS.map((x) => ({ label: x.label, dot: x.accent }))} />;
+  const tabs = <SegmentedTabs value={tab} onChange={setTab} items={STEPS.map((x) => ({ label: x.label, dot: x.accent }))} />;
   if (mobile) {
     return (
       <section id="program" style={{ padding: 'var(--section-y) 0 0' }}>
         <div style={{ padding: '0 var(--gutter)', display: 'flex', flexDirection: 'column', gap: 28 }}>
           {header}
-          <Rail>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             {STEPS.map((x) => (
-              <Card key={x.label} pad={20} style={{ width: 240, flex: '0 0 auto' }}>
-                <FeatureBullet icon={x.icon} title={x.cardTitle} body={x.one} color={x.accent} tint={x.tint} />
+              <Card key={x.label} pad={16} style={{ textAlign: 'center' }}>
+                <FeatureBullet icon={x.icon} title={x.cardTitle} body={x.one} color={x.accent} tint={x.tint}
+                  style={{ alignItems: 'center', gap: 12 }} />
               </Card>
             ))}
-          </Rail>
-          <div className="kw-rail" style={{ overflowX: 'auto', margin: '0 calc(var(--gutter) * -1)', padding: '4px var(--gutter) 8px' }}>{tabs}</div>
+          </div>
+          <div className="kw-mtabs">{tabs}</div>
           <MobileProgramCard key={s.label} s={s} />
         </div>
       </section>

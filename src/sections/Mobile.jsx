@@ -35,12 +35,13 @@ export function MobileNav() {
 }
 
 // SectionHeader on desktop; on phones the mobile kit's left-aligned stack with a 28px heading.
-export function SectionHead({ label, title, lead, tone = 'light', action, ...rest }) {
+export function SectionHead({ label, title, lead, tone = 'light', action, align, ...rest }) {
   const mobile = useIsMobile();
-  if (!mobile) return <SectionHeader label={label} title={title} lead={lead} tone={tone} action={action} {...rest} />;
+  if (!mobile) return <SectionHeader label={label} title={title} lead={lead} tone={tone} action={action} align={align} {...rest} />;
   const dark = tone === 'dark';
+  const center = align === 'center';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'flex-start' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: center ? 'center' : 'flex-start', textAlign: center ? 'center' : 'left' }}>
       {label && <Pill tone={dark ? 'dark' : 'neutral'}>{label}</Pill>}
       <h2 style={{ font: 'var(--type-h3)', fontSize: 28, color: dark ? '#fff' : 'var(--text-strong)' }}>{title}</h2>
       {lead && <p style={{ font: 'var(--type-body)', color: dark ? 'var(--text-on-dark-muted)' : 'var(--text-body)' }}>{lead}</p>}
@@ -50,9 +51,11 @@ export function SectionHead({ label, title, lead, tone = 'light', action, ...res
 }
 
 // Horizontal swipe rail that bleeds to the screen edges.
-export function Rail({ gap = 12, children }) {
+// `itemWidth` + `center` pads both ends so the first/last card sits in the middle of the screen.
+export function Rail({ gap = 12, itemWidth, children }) {
+  const pad = itemWidth ? 'max(var(--gutter), calc((100vw - ' + itemWidth + ') / 2))' : 'var(--gutter)';
   return (
-    <div className="kw-rail" style={{ display: 'flex', gap, overflowX: 'auto', margin: '0 calc(var(--gutter) * -1)', padding: '4px var(--gutter) 12px', scrollSnapType: 'x mandatory', scrollPaddingInline: 'var(--gutter)' }}>
+    <div className="kw-rail" style={{ display: 'flex', gap, overflowX: 'auto', margin: '0 calc(var(--gutter) * -1)', padding: '4px ' + pad + ' 12px', scrollSnapType: 'x mandatory', scrollPaddingInline: pad, ...(itemWidth ? { '--kw-snap': 'center' } : {}) }}>
       {children}
     </div>
   );

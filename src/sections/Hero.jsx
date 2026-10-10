@@ -140,7 +140,7 @@ export function Hero() {
           background: 'var(--surface-card)', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-card)',
           font: 'var(--type-body-sm)', color: 'var(--text-body)'
         }}>
-          수업 7단계 보기
+          수업 순서 보기
           <Icon name="chevron-down" size={16} style={{ color: 'var(--brand)', animation: 'kwNudge var(--cycle-nudge) ease-in-out infinite' }} />
         </a>
       </div>

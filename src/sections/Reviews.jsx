@@ -24,7 +24,7 @@ export function Reviews() {
           lead="문화센터에서 키즈와플 오감팡팡을 함께한 보호자께 받은 후기입니다."
           action={<Chip icon="star" tone="yellow">실제 수강 후기</Chip>} />
         {mobile
-          ? <Rail gap={14}>{REVIEWS.map((r) => <TestimonialCard key={r.author} rating={5} {...r} style={{ width: 'min(300px,82vw)', flex: '0 0 auto' }} />)}</Rail>
+          ? <Rail gap={14} itemWidth="min(300px,82vw)">{REVIEWS.map((r) => <TestimonialCard key={r.author} rating={5} {...r} style={{ width: 'min(300px,82vw)', flex: '0 0 auto' }} />)}</Rail>
           : <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 24, alignItems: 'stretch' }}>
               {REVIEWS.map((r) => <TestimonialCard key={r.author} rating={5} {...r} />)}
             </div>}
