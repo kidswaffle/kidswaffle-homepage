@@ -14,19 +14,19 @@ import stepTtoto from '../assets/characters/step-ttoto.webp';
 const STEPS = [
   { label: '인사·노래', accent: 'var(--kw-yellow)', image: stepWaple, imageAlt: '와플이',
     badge: '청각', title: '노래로 열고, 노래로 닫습니다',
-    body: '보호자와 함께 인사하고, 악기로 소리와 리듬을 느끼며, 끝 인사노래로 마무리합니다.',
+    body: '엄마와 함께 인사하고, 악기로 소리와 리듬을 느끼며, 끝 인사노래로 마무리합니다.',
     primary: ['청각'], secondary: ['리듬감'],
     highlights: [
-      { title: '보호자와 함께 인사', body: '첫 인사 노래' },
+      { title: '엄마와 함께 인사', body: '첫 인사 노래' },
       { title: '악기 연주', body: '소리와 리듬 경험' },
       { title: '끝 인사노래', body: '노래로 마무리' }] },
   { label: '인지카드', accent: 'var(--kw-sky)', image: stepMongle, imageAlt: '몽글이',
     badge: '시각·청각', title: '보고, 듣고, 따라 읽습니다',
-    body: '선생님이 단어를 읽으면 보호자가 따라 읽고, 아이는 보고 들으며 시각과 청각을 자극합니다.',
+    body: '선생님이 단어를 읽으면 엄마가 따라 읽고, 아이는 보고 들으며 시각과 청각을 자극합니다.',
     primary: ['시각', '청각'], secondary: ['어휘'],
     highlights: [
       { title: '선생님이 읽기', body: '설명과 함께 단어 소개' },
-      { title: '보호자가 따라 읽기', body: '같은 단어를 한 번 더' },
+      { title: '엄마가 따라 읽기', body: '같은 단어를 한 번 더' },
       { title: '아이가 보고 듣기', body: '시각·청각 자극' }] },
   { label: '오감교구', accent: 'var(--kw-coral)', image: stepDugeuni, imageAlt: '두근이',
     badge: '촉각·후각·미각', title: '아이에 맞춰 진행하는 1:1 오감활동',
@@ -38,11 +38,11 @@ const STEPS = [
       { title: '구강기 교구 분리', body: '따로 모아 관리' }] },
   { label: '포토존·정리', accent: 'var(--kw-green)', image: stepTtoto, imageAlt: '또또',
     badge: '표현·생활습관', title: '아이를 사진으로 남기고, 함께 정리합니다',
-    body: '매주 새로운 테마 포토존에서 영유아 아이만 촬영하고, 놀이 후에는 보호자와 함께 정리합니다.',
+    body: '매주 새로운 테마 포토존에서 영유아 아이만 촬영하고, 놀이 후에는 엄마와 함께 정리합니다.',
     primary: ['표현'], secondary: ['생활습관'],
     highlights: [
       { title: '테마 포토존 촬영', body: '영유아 아이만 촬영' },
-      { title: '보호자와 함께 정리', body: '교구를 제자리에' }] }
+      { title: '엄마와 함께 정리', body: '교구를 제자리에' }] }
 ];
 
 // Phone version of ProgramCard: accent band with the character, then copy, focus chips and highlights.
