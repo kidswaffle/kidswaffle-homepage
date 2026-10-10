@@ -1,5 +1,5 @@
 import React from 'react';
-import { SectionHead as SectionHeader, Rail } from './Mobile.jsx';
+import { SectionHead as SectionHeader } from './Mobile.jsx';
 import { Chip } from '../components/core/Chip.jsx';
 import { Button } from '../components/core/Button.jsx';
 import { Icon } from '../components/core/Icon.jsx';
@@ -36,17 +36,15 @@ const REVIEWS = [
   { title: '키즈와플 오감팡팡 타임스퀘어점 수업후기', author: '맘카페 후기', place: '신세계백화점 타임스퀘어점', date: '2025.02', accent: 'var(--kw-coral)', photos: [],
     body: '여름학기에 수강하고 다른 수업도 경험하고 싶어서 다른 수업을 들었다가 다시 돌아온 키즈와플! 처음엔 앉아만 있던 아기였는데 어느덧 기동성이 좋아져서 선생님이 교구를 꺼내면 다가가기도 하고, 여름보다 좀 더 적극적으로 수업에 참여할 수 있었어요. 악기 교구들과 촉감놀이, 매주 테마에 맞는 교구들로 40분 동안 신나게 놀 수 있어요! 거기에 퀄 좋은 코스튬으로 너무 귀여운 모습도 볼 수 있고, 사진 선생님께서 아기들의 이쁜 모습을 찍어 종강 때 인화도 해주는 사진 선물까지! 꽉 찬 겨울학기였습니다! 이제 어린이집 가야 해서 문센은 끝이지만 좋은 기억으로 가지고 갑니다.' }
 ];
-const FIRST = 6;
 
-function ReviewCard({ r, mobile }) {
+function ReviewCard({ r }) {
   const [open, setOpen] = React.useState(false);
   const long = r.body.length > 150;
   const n = r.photos.length;
   return (
-    <article style={{
-      display: 'flex', flexDirection: 'column', gap: 16, padding: mobile ? 24 : 28, 
+    <article className="kw-rv-card" style={{
+      display: 'flex', flexDirection: 'column', gap: 16, padding: 28, 
       background: 'var(--surface-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-card)',
-      ...(mobile ? { width: 'min(320px,84vw)', flex: '0 0 auto' } : {})
     }}>
       <Icon name="quote" size={26} style={{ color: r.accent }} />
       <h3 style={{ font: 'var(--type-h4)', color: 'var(--text-strong)' }}>{r.title}</h3>
@@ -73,24 +71,100 @@ function ReviewCard({ r, mobile }) {
   );
 }
 
+const AUTO_MS = 5000;   // time each review stays before sliding to the next
+const RESUME_MS = 8000; // wait after a swipe or click before auto-sliding again
+
+// Reviews slide by themselves, one card at a time, and loop back to the first.
+// Sliding pauses while the pointer or focus is on the carousel, while a review is expanded,
+// while the section is off screen, and entirely for people who prefer reduced motion.
+function ReviewCarousel() {
+  const rail = React.useRef(null);
+  const hold = React.useRef({ hover: false, until: 0, visible: false });
+  const [page, setPage] = React.useState(0);
+  const [pages, setPages] = React.useState(REVIEWS.length);
+
+  const step = () => {
+    const el = rail.current;
+    const a = el && el.children[0], b = el && el.children[1];
+    return a && b ? b.offsetLeft - a.offsetLeft : 0;
+  };
+  const measure = () => {
+    const el = rail.current, st = step();
+    if (!el || !st) return;
+    setPages(Math.max(1, Math.round((el.scrollWidth - el.clientWidth) / st) + 1));
+    setPage(Math.min(Math.round(el.scrollLeft / st), Math.round((el.scrollWidth - el.clientWidth) / st)));
+  };
+  const goTo = (i) => {
+    const el = rail.current, st = step();
+    if (el && st) el.scrollTo({ left: i * st, behavior: 'smooth' });
+  };
+  const next = (wrap) => {
+    const el = rail.current, st = step();
+    if (!el || !st) return;
+    const max = el.scrollWidth - el.clientWidth;
+    if (el.scrollLeft >= max - 4) { if (wrap) el.scrollTo({ left: 0, behavior: 'smooth' }); }
+    else el.scrollTo({ left: Math.min(el.scrollLeft + st, max), behavior: 'smooth' });
+  };
+  const prev = () => {
+    const el = rail.current, st = step();
+    if (!el || !st) return;
+    if (el.scrollLeft <= 4) el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+    else el.scrollTo({ left: Math.max(el.scrollLeft - st, 0), behavior: 'smooth' });
+  };
+  const userMoved = () => { hold.current.until = Date.now() + RESUME_MS; };
+
+  React.useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+    const h = hold.current;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let raf = 0;
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(measure); };
+    const io = new IntersectionObserver((es) => { h.visible = es[0].isIntersecting; }, { threshold: 0.3 });
+    io.observe(el);
+    const timer = setInterval(() => {
+      if (reduce || document.hidden || !h.visible || h.hover || Date.now() < h.until) return;
+      if (el.querySelector('[aria-expanded="true"]')) return;
+      next(true);
+    }, AUTO_MS);
+    el.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', measure);
+    measure();
+    return () => { clearInterval(timer); io.disconnect(); cancelAnimationFrame(raf); el.removeEventListener('scroll', onScroll); window.removeEventListener('resize', measure); };
+  }, []);
+
+  const arrow = { width: 44, height: 44, display: 'grid', placeItems: 'center', borderRadius: '50%', border: '1px solid var(--border-subtle)', background: 'var(--surface-card)', color: 'var(--text-strong)', cursor: 'pointer', boxShadow: 'var(--shadow-card)' };
+  return (
+    <div role="region" aria-roledescription="carousel" aria-label="수강 후기"
+      onMouseEnter={() => { hold.current.hover = true; }} onMouseLeave={() => { hold.current.hover = false; }}
+      onFocus={() => { hold.current.hover = true; }} onBlur={() => { hold.current.hover = false; }}
+      onTouchStart={userMoved} onWheel={userMoved}>
+      <div ref={rail} className="kw-rv-rail">
+        {REVIEWS.map((r) => <ReviewCard key={r.title + r.date} r={r} />)}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 8 }}>
+        <button type="button" aria-label="이전 후기" onClick={() => { userMoved(); prev(); }} style={arrow}><Icon name="arrow-left" size={18} /></button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {Array.from({ length: pages }, (_, i) => (
+            <button key={i} type="button" aria-label={(i + 1) + '번째 후기로 이동'} aria-current={i === page} onClick={() => { userMoved(); goTo(i); }}
+              style={{ width: i === page ? 28 : 10, height: 10, padding: 0, border: 0, borderRadius: 999, cursor: 'pointer', background: i === page ? 'var(--brand)' : 'var(--kw-ink-200, #d9cfc4)', transition: 'width var(--dur-3) var(--ease-out), background var(--dur-3) var(--ease-out)' }} />
+          ))}
+        </div>
+        <button type="button" aria-label="다음 후기" onClick={() => { userMoved(); next(true); }} style={arrow}><Icon name="arrow-right" size={18} /></button>
+      </div>
+    </div>
+  );
+}
+
 export function Reviews() {
   const mobile = useIsMobile();
-  const [all, setAll] = React.useState(false);
-  const list = mobile || all ? REVIEWS : REVIEWS.slice(0, FIRST);
   return (
     <section id="reviews" style={{ padding: 'var(--section-y) 0 0' }}>
       <div style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '0 var(--gutter)', display: 'flex', flexDirection: 'column', gap: mobile ? 28 : 48 }}>
         <SectionHeader align="center" label="학부모 후기" title="아이의 변화를 가장 먼저 알아채는 분들"
           lead="문화센터에서 키즈와플 오감팡팡을 함께한 보호자께 받은 후기입니다."
           action={<Chip icon="star" tone="yellow">실제 수강 후기</Chip>} />
-        {mobile
-          ? <Rail gap={14} itemWidth="min(320px,84vw)">{list.map((r) => <ReviewCard key={r.title + r.date} r={r} mobile />)}</Rail>
-          : <div style={{ display: 'grid', alignItems: 'start', gap: 24 }} className="kw-reviews-grid">{list.map((r) => <ReviewCard key={r.title + r.date} r={r} />)}</div>}
-        {!mobile && REVIEWS.length > FIRST && (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant="secondary" onClick={() => setAll(!all)}>{all ? '후기 접기' : '후기 더 보기 (' + (REVIEWS.length - FIRST) + ')'}</Button>
-          </div>
-        )}
+        <ReviewCarousel />
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <Button size="lg" full={mobile} icon="phone" href={KAKAO} target="_blank" rel="noreferrer">카카오톡 상담하기</Button>
         </div>
