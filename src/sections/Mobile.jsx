@@ -34,15 +34,6 @@ export function MobileNav() {
   );
 }
 
-// The only fixed element in the system: a Kakao CTA over a cream protection gradient.
-export function MobileStickyCta() {
-  return (
-    <div style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 45, padding: '12px 16px calc(16px + env(safe-area-inset-bottom))', background: 'linear-gradient(to top,var(--kw-cream) 62%,rgba(255,247,236,0))' }}>
-      <Button full size="lg" icon="phone" href={KAKAO} target="_blank" rel="noreferrer">카카오톡 상담하기</Button>
-    </div>
-  );
-}
-
 // SectionHeader on desktop; on phones the mobile kit's left-aligned stack with a 28px heading.
 export function SectionHead({ label, title, lead, tone = 'light', action, ...rest }) {
   const mobile = useIsMobile();

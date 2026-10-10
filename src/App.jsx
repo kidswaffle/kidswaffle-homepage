@@ -8,7 +8,7 @@ import { Reviews } from './sections/Reviews.jsx';
 import { Characters } from './sections/Characters.jsx';
 import { Videos } from './sections/Videos.jsx';
 import { Closing } from './sections/Closing.jsx';
-import { MobileNav, MobileStickyCta } from './sections/Mobile.jsx';
+import { MobileNav } from './sections/Mobile.jsx';
 import { useScrollReveal } from './useScrollReveal.js';
 import { useIsMobile } from './lib.js';
 
@@ -30,7 +30,6 @@ export function App() {
       <Videos />
       <Closing />
     </div>
-    {mobile && <MobileStickyCta />}
     </>
   );
 }
