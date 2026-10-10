@@ -53,6 +53,9 @@ function PlayingCard({ video }) {
   const frame = React.useRef(null);
   const box = React.useRef(null);
   const [playing, setPlaying] = React.useState(true);
+  // Our overlay and bar only appear once YouTube reports playback. Until then the player's own
+  // play button stays tappable, so a phone that blocks autoplay still starts with a single tap.
+  const [started, setStarted] = React.useState(false);
   const [muted, setMuted] = React.useState(false);
   const send = (func, args = []) => frame.current && frame.current.contentWindow &&
     frame.current.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
@@ -66,7 +69,7 @@ function PlayingCard({ video }) {
       let d = e.data;
       try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
       const st = d && d.info && d.info.playerState;
-      if (st === 1) { setPlaying(true); captionsOff(); }
+      if (st === 1) { setPlaying(true); setStarted(true); captionsOff(); }
       else if (st === 2 || st === 0) setPlaying(false);
     };
     window.addEventListener('message', onMessage);
@@ -87,16 +90,16 @@ function PlayingCard({ video }) {
     <div style={{ display: 'flex', flexDirection: 'column', background: 'var(--surface-dark-raised)', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
       <div ref={box} className="kw-player" style={{ position: 'relative', aspectRatio: '16/9', background: '#000' }}>
         <iframe ref={frame} src={src} title={video.title}
-          onLoad={() => { frame.current && frame.current.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); captionsOff(); }}
+          onLoad={() => { frame.current && frame.current.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); send('playVideo'); captionsOff(); }}
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }} />
-        <div onClick={toggle} style={{ position: 'absolute', inset: 0, cursor: 'pointer' }} />
-        <div className="kw-player-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', gap: 4, padding: '28px 12px 10px', background: 'linear-gradient(to top,rgba(0,0,0,.7),rgba(0,0,0,0))', pointerEvents: 'none' }}>
+        {started && <div onClick={toggle} style={{ position: 'absolute', inset: 0, cursor: 'pointer' }} />}
+        {started && <div className="kw-player-bar" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'center', gap: 4, padding: '28px 12px 10px', background: 'linear-gradient(to top,rgba(0,0,0,.7),rgba(0,0,0,0))', pointerEvents: 'none' }}>
           <button type="button" aria-label={playing ? '일시정지' : '재생'} onClick={(e) => { e.stopPropagation(); toggle(); }} style={{ ...btn, pointerEvents: 'auto' }}><Glyph name={playing ? 'pause' : 'play'} /></button>
           <button type="button" aria-label={muted ? '소리 켜기' : '소리 끄기'} onClick={toggleSound} style={{ ...btn, pointerEvents: 'auto' }}><Glyph name={muted ? 'mute' : 'volume'} /></button>
           <span style={{ flex: 1 }} />
           <button type="button" aria-label="전체 화면" onClick={fullscreen} style={{ ...btn, pointerEvents: 'auto' }}><Glyph name="expand" /></button>
-        </div>
+        </div>}
       </div>
       <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
         <span style={{ alignSelf: 'flex-start', font: 'var(--type-label)', color: 'var(--text-on-dark)', background: 'var(--surface-dark)', borderRadius: 'var(--radius-pill)', padding: '0 14px', height: 32, display: 'inline-flex', alignItems: 'center' }}>{video.topic}</span>

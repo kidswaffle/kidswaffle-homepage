@@ -6,6 +6,7 @@ import { Card } from '../components/core/Card.jsx';
 import { Pill } from '../components/core/Pill.jsx';
 import { SectionHeader } from '../components/marketing/SectionHeader.jsx';
 import { KAKAO, goto, useIsMobile } from '../lib.js';
+import logo from '../assets/logo.png';
 
 export const NAV = { '브랜드 소개': 'brand', '오감놀이': 'program', '학부모 후기': 'reviews', '수업 영상': 'videos', '자주 묻는 질문': 'faq' };
 
@@ -15,9 +16,9 @@ export function MobileNav() {
   return (
     <div className="kw-mnav" style={{ position: 'sticky', top: 12, zIndex: 50, margin: '12px 16px 0' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, height: 64, padding: '0 10px 0 20px', background: 'var(--surface-card)', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-nav)' }}>
-        <span style={{ flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 21, letterSpacing: '-.02em', color: 'var(--text-strong)' }}>
-          KIDS<span style={{ color: 'var(--brand)' }}>WAFFLE</span>
-        </span>
+        <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="키즈와플 KIDSWAFFLE 첫 화면으로" style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center' }}>
+          <img src={logo} alt="키즈와플 KIDSWAFFLE" width="584" height="153" style={{ height: 32, width: 'auto', maxWidth: '100%', objectFit: 'contain', objectPosition: 'left center' }} />
+        </a>
         <Button size="sm" variant="dark" href={KAKAO} target="_blank" rel="noreferrer">카카오톡 상담</Button>
         <IconButton name={open ? 'x' : 'menu'} label="메뉴" variant="ghost" aria-expanded={open} onClick={() => setOpen(!open)} />
       </div>
