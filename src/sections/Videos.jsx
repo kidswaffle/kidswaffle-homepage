@@ -54,8 +54,10 @@ function PlayingCard({ video }) {
   const box = React.useRef(null);
   const [playing, setPlaying] = React.useState(true);
   const [muted, setMuted] = React.useState(false);
-  const send = (func) => frame.current && frame.current.contentWindow &&
-    frame.current.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*');
+  const send = (func, args = []) => frame.current && frame.current.contentWindow &&
+    frame.current.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+  // Captions stay off: YouTube can switch them on from the viewer's own account settings.
+  const captionsOff = () => { send('unloadModule', ['captions']); send('unloadModule', ['cc']); };
 
   React.useEffect(() => {
     // Keep the button in step with the player (e.g. when the video ends).
@@ -64,7 +66,7 @@ function PlayingCard({ video }) {
       let d = e.data;
       try { if (typeof d === 'string') d = JSON.parse(d); } catch { return; }
       const st = d && d.info && d.info.playerState;
-      if (st === 1) setPlaying(true);
+      if (st === 1) { setPlaying(true); captionsOff(); }
       else if (st === 2 || st === 0) setPlaying(false);
     };
     window.addEventListener('message', onMessage);
@@ -80,12 +82,12 @@ function PlayingCard({ video }) {
   };
   const btn = { width: 40, height: 40, display: 'grid', placeItems: 'center', border: 0, borderRadius: '50%', background: 'transparent', color: '#fff', cursor: 'pointer' };
   const src = 'https://www.youtube-nocookie.com/embed/' + video.id +
-    '?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&fs=0&disablekb=1&enablejsapi=1&origin=' + encodeURIComponent(window.location.origin);
+    '?autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&cc_load_policy=0&fs=0&disablekb=1&enablejsapi=1&origin=' + encodeURIComponent(window.location.origin);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', background: 'var(--surface-dark-raised)', border: '1px solid var(--border-dark)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
       <div ref={box} className="kw-player" style={{ position: 'relative', aspectRatio: '16/9', background: '#000' }}>
         <iframe ref={frame} src={src} title={video.title}
-          onLoad={() => frame.current && frame.current.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*')}
+          onLoad={() => { frame.current && frame.current.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); captionsOff(); }}
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }} />
         <div onClick={toggle} style={{ position: 'absolute', inset: 0, cursor: 'pointer' }} />
