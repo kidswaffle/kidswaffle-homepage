@@ -41,5 +41,5 @@ Vercel에서 이 저장소를 가져오면 Vite 프로젝트로 자동 인식됩
 - 카카오톡 상담 링크: `src/lib.js`의 `KAKAO`
 - 수치 띠 기준값(누적 체험 유아, 운영 기간): `src/sections/Stats.jsx`의 `STATS_BASE` — 매월 30명, 매년 1년씩 자동 증가
 - 영상 목록: 유튜브 채널의 최신 영상(쇼츠 제외) 3개가 자동으로 표시됩니다(`api/videos.js`, 1시간마다 갱신). 목록을 못 가져오면 `src/sections/Videos.jsx`의 `FALLBACK` 영상이 대신 나옵니다. 탭(동요/수업 소개)은 제목에 "송·노래·동요·율동"이 있으면 동요로 나눕니다(`api/_youtube.js`의 `topicOf`). 채널 번호를 직접 지정하려면 Vercel 환경 변수 `YOUTUBE_CHANNEL_ID`를 넣으세요.
-- 후기: `src/sections/Reviews.jsx`의 `REVIEWS`
+- 후기: `src/sections/Reviews.jsx`의 `REVIEWS` (실제 수강 후기 9건, 사진은 `src/assets/reviews/`). 컴퓨터에서는 처음 6건만 보이고 "후기 더 보기"로 나머지를 펼칩니다.
 - FAQ: `src/sections/Closing.jsx`의 `FAQ` (바꾸면 `index.html`의 JSON-LD FAQ도 함께 수정)
