@@ -58,7 +58,7 @@ function ReviewCard({ r }) {
       {n > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: n === 1 ? '1fr' : 'repeat(' + n + ',1fr)', gap: 8 }}>
           {r.photos.map((src, i) => (
-            <img key={i} src={src} alt="수강 후기에 올라온 수업 사진" loading="lazy"
+            <img key={i} src={src} alt={r.place + ' 수강 후기에 올라온 수업 사진 ' + (i + 1) + '/' + n} loading="lazy"
               style={{ width: '100%', aspectRatio: n === 1 ? '16/10' : '1/1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
           ))}
         </div>

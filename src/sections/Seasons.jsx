@@ -9,8 +9,12 @@ import christmas from '../assets/seasons/christmas.webp';
 import harvest from '../assets/seasons/harvest.webp';
 
 const SEASONS = [
-  { src: persimmon, pos: '50% 40%' }, { src: taiyaki, pos: '50% 35%' }, { src: squirrel, pos: '50% 45%' },
-  { src: hanok, pos: '50% 45%' }, { src: christmas, pos: '50% 40%' }, { src: harvest, pos: '50% 50%' }
+  { src: persimmon, pos: '50% 40%', alt: '가을 한옥마을에서 감을 수확하는 아기 테마 포토존' },
+  { src: taiyaki, pos: '50% 35%', alt: '가을 붕어빵 포장마차 테마 포토존의 아기' },
+  { src: squirrel, pos: '50% 45%', alt: '가을 숲속 다람쥐 의상을 입은 아기 테마 포토존' },
+  { src: hanok, pos: '50% 45%', alt: '알록달록한 한옥 마당의 가을 축제 테마 포토존' },
+  { src: christmas, pos: '50% 40%', alt: '산타와 함께하는 크리스마스 축제 테마 포토존' },
+  { src: harvest, pos: '50% 50%', alt: '황금 들판의 가을 축제 테마 포토존' }
 ];
 
 export function Seasons() {
@@ -37,7 +41,7 @@ export function Seasons() {
         <div className="kw-season-rail">
           {list.map((s, i) => (
             <figure key={i} className="kw-season-card" style={{ margin: '0 24px 0 0' }} aria-hidden={i >= SEASONS.length ? 'true' : undefined}>
-              <img loading="lazy" src={s.src} width="720" height="720" alt="키즈와플 오감팡팡 테마 포토존에서 노는 아기" style={{ objectPosition: s.pos }} />
+              <img loading="lazy" src={s.src} width="720" height="720" alt={(i < SEASONS.length ? '키즈와플 오감팡팡 ' + s.alt : '')} style={{ objectPosition: s.pos }} />
             </figure>
           ))}
         </div>
