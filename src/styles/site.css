@@ -45,18 +45,36 @@ html{scroll-behavior:smooth}
   .kw-rv-card{flex-basis:min(320px,84vw);scroll-snap-align:center}
 }
 
-/* Hero intro motion (src/sections/HeroStage.jsx). Server HTML is the final frame. */
-.kw-ch{display:inline-block}
+/* Hero stage "와플 오비트" (src/sections/HeroStage.jsx). Server HTML is a still frame. */
+.kw-stage{position:relative;margin:0 auto;isolation:isolate;user-select:none;-webkit-user-select:none}
+.kw-stage>*{position:absolute}
+.kw-glow{inset:-12% -8% -6%;background:radial-gradient(closest-side,rgba(251,197,75,.42),rgba(251,197,75,.12) 55%,rgba(251,197,75,0));pointer-events:none}
+.kw-blob{width:100%;overflow:visible;filter:drop-shadow(0 18px 30px rgba(212,140,30,.22))}
+.kw-sheen{animation:kwSheen 7s cubic-bezier(.45,0,.25,1) 1.6s infinite}
+@keyframes kwSheen{0%{transform:translateX(0) rotate(18deg)}38%,100%{transform:translateX(640px) rotate(18deg)}}
+.kw-ring{z-index:0;pointer-events:none}
+.kw-orbit{inset:0;z-index:auto}
+.kw-orb{position:absolute;left:0;top:0;transform-origin:50% 50%;will-change:transform}
+.kw-orb-in{position:relative;display:block;width:100%;height:100%;border-radius:50%;overflow:hidden}
+.kw-orb-friend{position:absolute;left:8%;width:84%;top:13%;height:auto}
+.kw-orb-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kw-hero{left:5%;top:0;z-index:2;will-change:transform}
+.kw-hero img{display:block;width:100%;height:auto}
+.kw-sparks{inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
 .kw-draw{stroke-dasharray:1 2;stroke-dashoffset:0}
-.kw-theme{position:relative;display:inline-block;flex:none;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--kw-yellow)}
-.kw-theme img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;animation:kwTheme 7.8s ease-in-out infinite}
-.kw-theme img:first-child{opacity:1}
-@keyframes kwTheme{0%,30%{opacity:1}36%,94%{opacity:0}100%{opacity:1}}
-/* `kw-intro` (set in index.html before first paint) holds the start state until the intro takes over;
-   if the script never runs, everything shows after 2.5s. */
-@keyframes kwIntroShow{to{opacity:1}}
+/* Headline words rise out of masks; "오감놀이" is underlined */
+.kw-word{position:relative;display:inline-block;white-space:nowrap}
+.kw-mask{display:inline-block;overflow:hidden;padding:.08em .02em .12em;margin:-.08em -.02em -.12em;vertical-align:bottom}
+.kw-word-in{display:inline-block;transform-origin:0 100%}
+.kw-ul{position:absolute;left:-2%;width:104%;bottom:-.16em;height:.3em;overflow:visible}
+/* Main call to action: a soft light passes over it now and then */
+[data-kw="cta"]{position:relative;overflow:hidden}
+[data-kw="cta"]::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);animation:kwShine 9s ease-in-out 3s infinite;pointer-events:none}
+@keyframes kwShine{0%{transform:translateX(-120%)}14%,100%{transform:translateX(120%)}}
+/* `kw-intro` (set in index.html before first paint) holds the copy's start state until the intro takes
+   over; if the script never runs, everything shows after 2.5s. */
+@keyframes kwIntroShow{to{opacity:1;transform:none}}
 @keyframes kwIntroDraw{to{stroke-dashoffset:0}}
-html.kw-intro [data-kw-hide]{opacity:0;animation:kwIntroShow .01s 2.5s forwards}
-html.kw-intro .kw-draw{stroke-dashoffset:1;animation:kwIntroDraw .01s 2.5s forwards}
-.kw-stage-wait [data-kw-hide]{opacity:0!important}
-.kw-stage-wait .kw-draw{stroke-dashoffset:1!important}
+html.kw-intro .kw-word-in{transform:translateY(108%);animation:kwIntroShow .01s 2.5s forwards}
+html.kw-intro [data-kw-rise],html.kw-intro .kw-nav a[aria-label$="첫 화면으로"],html.kw-intro .kw-mnav a[aria-label$="첫 화면으로"]{opacity:0;animation:kwIntroShow .01s 2.5s forwards}
+html.kw-intro h1 .kw-draw{stroke-dashoffset:1;animation:kwIntroDraw .01s 2.5s forwards}

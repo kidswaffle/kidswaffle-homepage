@@ -48,22 +48,22 @@ function MobileHero() {
     <header ref={ref} style={{ position: 'relative', overflowX: 'clip', paddingBottom: 8 }}>
       <Blob color="var(--kw-yellow-tint)" size={210} top={-40} right={-70} />
       <Blob color="var(--kw-mint-tint)" size={160} top={520} left={-80} delay={1.4} opacity={.7} />
-      <div className="kw-rise" style={{ position: 'relative', padding: '36px var(--gutter) 0', display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'flex-start' }}>
-        <span style={{ font: 'var(--type-label)', letterSpacing: '.02em', color: 'var(--text-brand)' }}>부모와 함께하는 영유아 오감놀이 · 키즈와플 오감팡팡</span>
+      <div style={{ position: 'relative', padding: '36px var(--gutter) 0', display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'flex-start' }}>
+        <span data-kw-rise="" style={{ font: 'var(--type-label)', letterSpacing: '.02em', color: 'var(--text-brand)' }}>부모와 함께하는 영유아 오감놀이 · 키즈와플 오감팡팡</span>
         <h1 aria-label="북적이지 않아서, 아이가 머무는 오감놀이" style={{ font: 'var(--type-h1)', fontSize: 'clamp(34px,10vw,42px)', lineHeight: 1.14 }}>
           <span style={{ display: 'block', color: 'var(--brand)' }}><HopText text="북적이지 않아서," /></span>
           <span style={{ display: 'block' }}><HopText text="아이가 머무는 오감놀이" mark="오감놀이" /></span>
         </h1>
-        <p style={{ font: 'var(--type-body)', color: 'var(--text-body)' }}>
+        <p data-kw-rise="" style={{ font: 'var(--type-body)', color: 'var(--text-body)' }}>
           5~24개월 아이와 부모가 함께 듣는 수업입니다. 한 클래스 최대 10명으로, 아이가 충분히 만지고 반응할 때까지 기다립니다. 매주 바뀌는 테마 놀이와 포토존 사진으로 첫 놀이를 기록해요.
         </p>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div data-kw-rise="" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <Chip tone="yellow" icon="baby">생후 5~24개월</Chip>
           <Chip tone="mint" icon="users">부모와 함께 듣는 수업</Chip>
           <Chip tone="mint" icon="users">한 클래스 최대 10명</Chip>
         </div>
-        <Button data-kw="cta" full size="lg" icon="phone" href={KAKAO} target="_blank" rel="noreferrer">카카오톡 상담하기</Button>
-        <Button full size="lg" variant="secondary" icon="layout-grid" href="#program" onClick={goto('program')}>오감놀이 둘러보기</Button>
+        <Button data-kw="cta" data-kw-rise="" full size="lg" icon="phone" href={KAKAO} target="_blank" rel="noreferrer">카카오톡 상담하기</Button>
+        <Button data-kw-rise="" full size="lg" variant="secondary" icon="layout-grid" href="#program" onClick={goto('program')}>오감놀이 둘러보기</Button>
       </div>
       <div style={{ position: 'relative', marginTop: 28 }}>
         <HeroStage mobile />
@@ -98,20 +98,20 @@ export function Hero() {
         padding: '48px var(--gutter) 0', display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit,minmax(360px,1fr))', gap: 48, alignItems: 'center'
       }}>
-        <div className="kw-rise" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 26 }}>
-          <span style={{ font: 'var(--type-label)', letterSpacing: '.02em', color: 'var(--text-brand)', display: 'flex', flexWrap: 'wrap', columnGap: 8 }}><span style={{ whiteSpace: 'nowrap' }}>부모와 함께하는 영유아 오감놀이 ·</span><span style={{ whiteSpace: 'nowrap' }}>키즈와플 오감팡팡</span></span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 26 }}>
+          <span data-kw-rise="" style={{ font: 'var(--type-label)', letterSpacing: '.02em', color: 'var(--text-brand)', display: 'flex', flexWrap: 'wrap', columnGap: 8 }}><span style={{ whiteSpace: 'nowrap' }}>부모와 함께하는 영유아 오감놀이 ·</span><span style={{ whiteSpace: 'nowrap' }}>키즈와플 오감팡팡</span></span>
           <h1 aria-label="북적이지 않아서, 아이가 머무는 오감놀이" style={{ font: 'var(--type-h1)', fontSize: 'clamp(38px,5.2vw,74px)', lineHeight: 1.12 }}>
             <span style={{ display: 'block', color: 'var(--brand)' }}><HopText text="북적이지 않아서," /></span>
             <span style={{ display: 'block' }}><HopText text="아이가 머무는 오감놀이" mark="오감놀이" /></span>
           </h1>
-          <p style={{ font: 'var(--type-body-lg)', fontSize: 19, color: 'var(--text-body)', maxWidth: 480 }}>
+          <p data-kw-rise="" style={{ font: 'var(--type-body-lg)', fontSize: 19, color: 'var(--text-body)', maxWidth: 480 }}>
             5~24개월 아이와 부모가 함께 듣는 수업입니다. 한 클래스 최대 10명으로, 아이가 충분히 만지고 반응할 때까지 기다립니다. 매주 바뀌는 테마 놀이와 포토존 사진으로 첫 놀이를 기록해요.
           </p>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div data-kw-rise="" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <Button data-kw="cta" size="lg" icon="phone" href={KAKAO} target="_blank" rel="noreferrer">카카오톡 상담하기</Button>
             <Button size="lg" variant="secondary" icon="layout-grid" href="#program" onClick={goto('program')}>오감놀이 둘러보기</Button>
           </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 6 }}>
+          <div data-kw-rise="" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 6 }}>
             <Chip tone="yellow" icon="baby">생후 5~24개월</Chip>
             <Chip tone="mint" icon="users">부모와 함께 듣는 수업</Chip>
             <Chip tone="mint" icon="users">한 클래스 최대 10명</Chip>
