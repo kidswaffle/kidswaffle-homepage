@@ -47,7 +47,7 @@ html{scroll-behavior:smooth}
 
 /* Hero intro motion (src/sections/HeroStage.jsx). Server HTML is the final frame. */
 .kw-ch{display:inline-block}
-.kw-draw{stroke-dasharray:1;stroke-dashoffset:0}
+.kw-draw{stroke-dasharray:1 2;stroke-dashoffset:0}
 .kw-theme{position:relative;display:inline-block;flex:none;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--kw-yellow)}
 .kw-theme img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;animation:kwTheme 7.8s ease-in-out infinite}
 .kw-theme img:first-child{opacity:1}
