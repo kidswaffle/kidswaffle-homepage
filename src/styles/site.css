@@ -44,3 +44,19 @@ html{scroll-behavior:smooth}
   .kw-rv-rail{gap:14px;margin:-12px calc(var(--gutter) * -1) -20px;padding:12px max(var(--gutter),calc((100vw - min(320px,84vw))/2)) 32px}
   .kw-rv-card{flex-basis:min(320px,84vw);scroll-snap-align:center}
 }
+
+/* Hero intro motion (src/sections/HeroStage.jsx). Server HTML is the final frame. */
+.kw-ch{display:inline-block}
+.kw-draw{stroke-dasharray:1;stroke-dashoffset:0}
+.kw-theme{position:relative;display:inline-block;flex:none;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--kw-yellow)}
+.kw-theme img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;animation:kwTheme 7.8s ease-in-out infinite}
+.kw-theme img:first-child{opacity:1}
+@keyframes kwTheme{0%,30%{opacity:1}36%,94%{opacity:0}100%{opacity:1}}
+/* `kw-intro` (set in index.html before first paint) holds the start state until the intro takes over;
+   if the script never runs, everything shows after 2.5s. */
+@keyframes kwIntroShow{to{opacity:1}}
+@keyframes kwIntroDraw{to{stroke-dashoffset:0}}
+html.kw-intro [data-kw-hide]{opacity:0;animation:kwIntroShow .01s 2.5s forwards}
+html.kw-intro .kw-draw{stroke-dashoffset:1;animation:kwIntroDraw .01s 2.5s forwards}
+.kw-stage-wait [data-kw-hide]{opacity:0!important}
+.kw-stage-wait .kw-draw{stroke-dashoffset:1!important}
