@@ -7,7 +7,7 @@ import { LogoTicker } from '../components/marketing/LogoTicker.jsx';
 import { KAKAO, goto, useIsMobile } from '../lib.js';
 import logo from '../assets/logo.png';
 import { NAV } from './Mobile.jsx';
-import { HeroStage, HopText, useHeroIntro } from './HeroStage.jsx';
+import { HeroStage, HopText, IntroOverlay, useHeroIntro } from './HeroStage.jsx';
 import shinsegae from '../assets/partners/shinsegae.webp';
 import emart from '../assets/partners/emart.webp';
 import classcoc from '../assets/partners/classcoc.webp';
@@ -46,6 +46,7 @@ function MobileHero() {
   useHeroIntro(ref, true);
   return (
     <header ref={ref} style={{ position: 'relative', overflowX: 'clip', paddingBottom: 8 }}>
+      <IntroOverlay />
       <Blob color="var(--kw-yellow-tint)" size={210} top={-40} right={-70} />
       <Blob color="var(--kw-mint-tint)" size={160} top={520} left={-80} delay={1.4} opacity={.7} />
       <div style={{ position: 'relative', padding: '36px var(--gutter) 0', display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'flex-start' }}>
@@ -82,6 +83,7 @@ export function Hero() {
   if (mobile) return <MobileHero />;
   return (
     <header ref={ref} style={{ position: 'relative', paddingTop: 20, overflowX: 'clip', overflowY: 'visible', paddingBottom: 24 }}>
+      <IntroOverlay />
       <Blob color="var(--kw-yellow-tint)" size={340} top={-40} left={-110} opacity={.75} />
       <Blob color="var(--kw-mint-tint)" size={260} top={420} left={-90} delay={1.4} opacity={.7} />
       <Blob color="var(--kw-coral-tint)" size={300} top={-70} right={-120} delay={2.2} opacity={.6} />

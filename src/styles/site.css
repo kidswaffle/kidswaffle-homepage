@@ -45,22 +45,42 @@ html{scroll-behavior:smooth}
   .kw-rv-card{flex-basis:min(320px,84vw);scroll-snap-align:center}
 }
 
-/* Hero stage "와플 오비트" (src/sections/HeroStage.jsx). Server HTML is a still frame. */
-.kw-stage{position:relative;margin:0 auto;isolation:isolate;user-select:none;-webkit-user-select:none}
-.kw-stage>*{position:absolute}
-.kw-glow{inset:-12% -8% -6%;background:radial-gradient(closest-side,rgba(251,197,75,.42),rgba(251,197,75,.12) 55%,rgba(251,197,75,0));pointer-events:none}
-.kw-blob{width:100%;overflow:visible;filter:drop-shadow(0 18px 30px rgba(212,140,30,.22))}
+/* Hero "와플이 등장" (src/sections/HeroStage.jsx). Stage and overlay share one square layout. */
+.kw-stage,.kw-ov-group{container-type:inline-size;user-select:none;-webkit-user-select:none}
+.kw-stage{position:relative;margin:0 auto;aspect-ratio:1;isolation:isolate}
+.kw-stage>*,.kw-ov-group>*{position:absolute}
+.kw-glow{inset:-8%;background:radial-gradient(closest-side,rgba(251,197,75,.45),rgba(251,197,75,.12) 60%,rgba(251,197,75,0));pointer-events:none}
+.kw-disc{left:4%;top:9%;width:92%;height:92%;overflow:visible;filter:drop-shadow(0 16px 26px rgba(212,140,30,.25))}
+.kw-disc-grid{transform-origin:200px 200px;animation:kwSpin 120s linear infinite}
+@keyframes kwSpin{to{transform:rotate(360deg)}}
 .kw-sheen{animation:kwSheen 7s cubic-bezier(.45,0,.25,1) 1.6s infinite}
 @keyframes kwSheen{0%{transform:translateX(0) rotate(18deg)}38%,100%{transform:translateX(640px) rotate(18deg)}}
-.kw-ring{z-index:0;pointer-events:none}
-.kw-orbit{inset:0;z-index:auto}
-.kw-orb{position:absolute;left:0;top:0;transform-origin:50% 50%;will-change:transform}
-.kw-orb-in{position:relative;display:block;width:100%;height:100%;border-radius:50%;overflow:hidden}
-.kw-orb-friend{position:absolute;left:8%;width:84%;top:13%;height:auto}
-.kw-orb-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.kw-hero{left:5%;top:0;z-index:2;will-change:transform}
-.kw-hero img{display:block;width:100%;height:auto}
-.kw-sparks{inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+.kw-shadow{left:31%;top:91.5%;width:38%;height:4.5%;border-radius:50%;background:radial-gradient(closest-side,rgba(46,33,26,.3),rgba(46,33,26,0));opacity:.8;pointer-events:none}
+.kw-waple{left:21%;top:19%;width:58%;padding:0;border:0;background:none;cursor:pointer;transform-origin:50% 96%;will-change:transform;-webkit-tap-highlight-color:transparent}
+.kw-waple:focus-visible{outline:3px solid var(--brand);outline-offset:6px;border-radius:24px}
+.kw-sprite{position:relative;display:block}
+.kw-sprite img{display:block;width:100%;height:auto;opacity:0;pointer-events:none}
+.kw-sprite img+img{position:absolute;left:0;top:0}
+.kw-sprite img.on{opacity:1}
+.kw-bubble{left:0;right:0;top:3%;display:flex;justify-content:center;pointer-events:none;z-index:3}
+.kw-stage .kw-bubble{opacity:0}
+.kw-bubble-in{position:relative;display:inline-block;padding:.5em 1em;border-radius:999px;background:#fff;color:var(--kw-ink-900);font-weight:800;font-size:clamp(13px,4.6cqw,24px);line-height:1.2;white-space:nowrap;box-shadow:0 10px 24px rgba(46,33,26,.14),0 0 0 3px var(--kw-yellow);transform-origin:50% 130%}
+.kw-bubble-in::after{content:"";position:absolute;left:50%;bottom:-9px;width:16px;height:16px;margin-left:-8px;background:#fff;transform:rotate(45deg);border-radius:3px;box-shadow:3px 3px 0 0 var(--kw-yellow)}
+.kw-fx{left:-15%;top:-15%;width:130%;height:130%;pointer-events:none;z-index:4}
+/* Intro overlay: only while <html> has kw-intro (JS takes over right away; hidden after 4s without JS) */
+.kw-ov{display:none;position:fixed;inset:0;z-index:1000;overflow:hidden}
+html.kw-intro .kw-ov{display:block;animation:kwOvGone 0s 4s forwards}
+@keyframes kwOvGone{to{visibility:hidden}}
+html.kw-intro .kw-ov-group,.kw-ov-wait .kw-ov-group{visibility:hidden}
+.kw-ov>*{position:absolute}
+.kw-ov-bg{inset:0;background:radial-gradient(circle at 50% 55%,#FFF6DD,#FFE3A6 70%,#FFD889)}
+.kw-ov-rays{left:50%;top:52%;width:220vmax;height:220vmax;opacity:0;pointer-events:none;background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.55) 0 7deg,transparent 7deg 15deg);-webkit-mask:radial-gradient(closest-side,#000 8%,transparent 62%);mask:radial-gradient(closest-side,#000 8%,transparent 62%)}
+.kw-ov-group{--S:min(74vh,88vw,600px);left:50%;top:50%;width:var(--S);height:var(--S);margin:calc(var(--S) / -2) 0 0 calc(var(--S) / -2);transform-origin:0 0;will-change:transform}
+.kw-ov-group .kw-disc{transform-origin:50% 50%}
+.kw-ov-group .kw-waple{cursor:default}
+.kw-ov-ring{left:30%;top:73%;width:40%;height:40%;border-radius:50%;border:5px solid #fff;box-shadow:0 0 0 3px rgba(251,197,75,.7);opacity:0;pointer-events:none}
+.kw-ov-fx{inset:0;width:100%;height:100%;pointer-events:none}
+.kw-ov-skip{right:20px;bottom:20px;height:40px;padding:0 18px;border:0;border-radius:999px;background:rgba(255,255,255,.85);color:var(--kw-ink-700);font:600 14px/1 inherit;font-family:inherit;cursor:pointer;opacity:0;box-shadow:0 4px 14px rgba(46,33,26,.1)}
 .kw-draw{stroke-dasharray:1 2;stroke-dashoffset:0}
 /* Headline words rise out of masks; "오감놀이" is underlined */
 .kw-word{position:relative;display:inline-block;white-space:nowrap}
@@ -72,9 +92,9 @@ html{scroll-behavior:smooth}
 [data-kw="cta"]::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);animation:kwShine 9s ease-in-out 3s infinite;pointer-events:none}
 @keyframes kwShine{0%{transform:translateX(-120%)}14%,100%{transform:translateX(120%)}}
 /* `kw-intro` (set in index.html before first paint) holds the copy's start state until the intro takes
-   over; if the script never runs, everything shows after 2.5s. */
+   over; if the script never runs, everything shows after 4s. */
 @keyframes kwIntroShow{to{opacity:1;transform:none}}
 @keyframes kwIntroDraw{to{stroke-dashoffset:0}}
-html.kw-intro .kw-word-in{transform:translateY(108%);animation:kwIntroShow .01s 2.5s forwards}
-html.kw-intro [data-kw-rise],html.kw-intro .kw-nav a[aria-label$="첫 화면으로"],html.kw-intro .kw-mnav a[aria-label$="첫 화면으로"]{opacity:0;animation:kwIntroShow .01s 2.5s forwards}
-html.kw-intro h1 .kw-draw{stroke-dashoffset:1;animation:kwIntroDraw .01s 2.5s forwards}
+html.kw-intro .kw-word-in{transform:translateY(108%);animation:kwIntroShow .01s 4s forwards}
+html.kw-intro [data-kw-rise],html.kw-intro .kw-nav a[aria-label$="첫 화면으로"],html.kw-intro .kw-mnav a[aria-label$="첫 화면으로"]{opacity:0;animation:kwIntroShow .01s 4s forwards}
+html.kw-intro h1 .kw-draw{stroke-dashoffset:1;animation:kwIntroDraw .01s 4s forwards}

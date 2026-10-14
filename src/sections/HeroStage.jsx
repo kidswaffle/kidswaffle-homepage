@@ -1,152 +1,138 @@
 import React from 'react';
 import { HERO_INTRO as T, EASE, MOBILE_TIME_SCALE } from '../hero-motion/timeline.js';
-import waple from '../assets/characters/waple-drop-in.webp';
-import mongle from '../assets/hero/mongle.webp';
-import dugeuni from '../assets/hero/dugeuni.webp';
-import ttoto from '../assets/hero/ttoto.webp';
-import themePersimmon from '../assets/hero/theme-persimmon.webp';
-import themeTaiyaki from '../assets/hero/theme-taiyaki.webp';
-import themeChristmas from '../assets/hero/theme-christmas.webp';
+import front from '../assets/waple/front.webp';
+import qLeft from '../assets/waple/q-left.webp';
+import qRight from '../assets/waple/q-right.webp';
+import sideLeft from '../assets/waple/side-left.webp';
+import sideRight from '../assets/waple/side-right.webp';
+import back from '../assets/waple/back.webp';
+import wave from '../assets/waple/wave.webp';
 
 /*
- * Hero stage, "와플 오비트": 와플이 on a living waffle blob, with the three friends and this
- * season's themes orbiting on a tilted ellipse, passing in front of and behind 와플이.
+ * Hero motion "와플이 등장", built only from 와플이's official turnaround renders (no redraw).
  *
- * Layers, back to front (each drifts with the pointer by its own depth):
- *   glow → blob (morphing gradient, waffle texture, light sweep) → back half of the orbit →
- *   와플이 → front half of the orbit → sparkle particles
+ * IntroOverlay (first visit per tab): a round waffle draws itself, 와플이 drops in spinning through
+ * the turnaround frames, lands with a squash, a shockwave and a burst of waffle confetti, waves
+ * hello, then flies into the hero stage (desktop) or zooms away (phone) while the headline rises.
  *
- * The server renders a still frame (orbit at its resting angle). In the browser one
- * requestAnimationFrame loop drives the intro and then the ambient motion, and only runs while
- * the stage is on screen and the tab is visible. Reduced-motion visitors get the still frame.
+ * HeroStage: 와플이 stays alive on the waffle — breathing, looking around, waving now and then,
+ * turning toward the pointer, and spinning with a jump when tapped.
+ *
+ * The server HTML is the still final frame. One requestAnimationFrame loop per part, paused while
+ * off screen or in a hidden tab. Reduced-motion visitors get the still frame and no overlay.
  */
 
 const MOBILE_QUERY = '(max-width: 760px)';
 const TAU = Math.PI * 2;
 
-const ORBIT = [
-  { kind: 'friend', name: '몽글이', src: mongle, tint: 'var(--kw-sky-tint)', ring: 'var(--kw-sky)' },
-  { kind: 'theme', name: '감 수확 테마', src: themePersimmon, ring: 'var(--kw-yellow)' },
-  { kind: 'friend', name: '두근이', src: dugeuni, tint: 'var(--kw-coral-tint)', ring: 'var(--kw-coral)' },
-  { kind: 'theme', name: '붕어빵 테마', src: themeTaiyaki, ring: 'var(--kw-coral)' },
-  { kind: 'friend', name: '또또', src: ttoto, tint: 'var(--kw-green-tint)', ring: 'var(--kw-green)' },
-  { kind: 'theme', name: '크리스마스 테마', src: themeChristmas, ring: 'var(--kw-green)' }
+// Frames share one crop box, so scale and floor line match. Named by where 와플이 faces on screen.
+const FRAMES = [
+  { k: 'front', src: front },
+  { k: 'l3', src: qRight }, // three-quarter, facing screen left
+  { k: 'l', src: sideLeft },
+  { k: 'back', src: back },
+  { k: 'r', src: sideRight },
+  { k: 'r3', src: qLeft }, // three-quarter, facing screen right
+  { k: 'wave', src: wave }
 ];
-
-// Stage geometry, as fractions of the stage width W (the stage is W × W·ratio).
-const GEO = {
-  desktop: { maxW: 560, ratio: 0.92, orbit: { cx: 0.5, cy: 0.585, rx: 0.48, ry: 0.2 }, item: 0.15, blob: { cx: 0.5, cy: 0.47, r: 0.31 }, hero: 0.9, particles: 26 },
-  mobile: { maxW: 360, ratio: 0.95, orbit: { cx: 0.5, cy: 0.585, rx: 0.46, ry: 0.19 }, item: 0.165, blob: { cx: 0.5, cy: 0.47, r: 0.31 }, hero: 0.9, particles: 14 }
-};
-const REST_ANGLE = -Math.PI / 2 + 0.35; // where the orbit rests in the server frame
-const ORBIT_PERIOD = 46000; // ms per revolution
+const SPIN = ['front', 'l3', 'l', 'back', 'r', 'r3'];
+const LINES = ['안녕! 나는 와플이야', '같이 놀자!', '오감놀이 좋아!', '만지고 느껴 봐!'];
+const STAGE_MAX = { desktop: 520, mobile: 340 };
 
 // --- small math helpers -----------------------------------------------------------------
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
 const easeOutExpo = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-// A spring that settles with one soft overshoot.
 const springOut = (t) => (t >= 1 ? 1 : 1 - Math.exp(-6.5 * t) * Math.cos(8.5 * t));
 const seg = (ms, delay, dur) => clamp01((ms - delay) / dur);
+// Landing squash: 1 at impact, wobbling back to 0.
+const wobble = (s) => (s >= 1 ? 0 : Math.exp(-5 * s) * Math.cos(10 * s));
+const spinFrame = (p, turns) => (p >= 1 ? 'front' : SPIN[Math.floor(p * turns * SPIN.length) % SPIN.length]);
 
-// Smooth closed blob through n points around (cx, cy) with per-point radius (Catmull-Rom → Bézier).
-function blobPath(cx, cy, radii, rot = 0) {
-  const n = radii.length;
-  const pts = radii.map((r, i) => {
-    const a = rot + (i / n) * TAU;
-    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
-  });
-  let d = `M${pts[0][0].toFixed(2)},${pts[0][1].toFixed(2)}`;
-  for (let i = 0; i < n; i++) {
-    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
-    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-    d += `C${c1[0].toFixed(2)},${c1[1].toFixed(2)} ${c2[0].toFixed(2)},${c2[1].toFixed(2)} ${p2[0].toFixed(2)},${p2[1].toFixed(2)}`;
-  }
-  return d + 'Z';
-}
-// Organic radius wobble: each point breathes on its own slow sine.
-const BLOB_SEEDS = [0, 1.7, 3.1, 4.4, 5.9, 2.3, 0.8];
-const blobRadii = (base, ms, amt = 0.055) => BLOB_SEEDS.map((s, i) =>
-  base * (1 + amt * Math.sin(ms / (2300 + i * 310) + s) + amt * 0.6 * Math.sin(ms / (3700 + i * 170) + s * 1.7)));
-
-// Position of orbit item i at a given orbit angle, in px within a W-wide stage.
-function orbitPose(i, angle, W, g) {
-  const a = angle + (i / ORBIT.length) * TAU;
-  const s = Math.sin(a);
-  const depth = (s + 1) / 2; // 0 = far (top of ellipse, behind), 1 = near (bottom, in front)
-  return {
-    x: (g.orbit.cx + g.orbit.rx * Math.cos(a)) * W,
-    y: (g.orbit.cy + g.orbit.ry * s) * W,
-    scale: 0.7 + 0.36 * depth,
-    opacity: 0.62 + 0.38 * depth,
-    front: s > 0
-  };
-}
-
-// --- the stage ----------------------------------------------------------------------------
-function OrbitItem({ it, i, sizePx, pose }) {
+// --- shared pieces ------------------------------------------------------------------------
+// A round waffle: crust rim, golden face, a grid of ridges that turns very slowly, a light sweep.
+function WaffleDisc({ uid }) {
+  const lines = Array.from({ length: 9 }, (_, i) => 72 + i * 32);
   return (
-    <span className="kw-orb" data-orb={i} style={{
-      width: sizePx, height: sizePx, opacity: pose.opacity, zIndex: pose.front ? 4 : 1,
-      transform: `translate(${(pose.x - sizePx / 2).toFixed(1)}px, ${(pose.y - sizePx / 2).toFixed(1)}px) scale(${pose.scale.toFixed(3)})`
-    }}>
-      <span className="kw-orb-in" style={{ background: it.tint || '#fff', boxShadow: `0 0 0 4px #fff, 0 0 0 7px ${it.ring}, 0 14px 30px rgba(46,33,26,.16)` }}>
-        <img src={it.src} alt={it.kind === 'friend' ? '키즈와플 캐릭터 ' + it.name : '키즈와플 오감팡팡 ' + it.name} loading="eager" draggable="false"
-          className={it.kind === 'friend' ? 'kw-orb-friend' : 'kw-orb-photo'} />
-      </span>
-    </span>
+    <svg className="kw-disc" viewBox="0 0 400 400" aria-hidden="true">
+      <defs>
+        <radialGradient id={`kwDiscFill-${uid}`} cx="40%" cy="34%" r="75%">
+          <stop offset="0" stopColor="#FFE9A8" />
+          <stop offset=".5" stopColor="#FBC54B" />
+          <stop offset="1" stopColor="#EFA03A" />
+        </radialGradient>
+        <linearGradient id={`kwDiscSheen-${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#fff" stopOpacity="0" />
+          <stop offset=".5" stopColor="#fff" stopOpacity=".55" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+        <clipPath id={`kwDiscClip-${uid}`}><circle cx="200" cy="200" r="168" /></clipPath>
+      </defs>
+      <circle cx="200" cy="200" r="190" fill="#E9952F" />
+      <circle cx="200" cy="200" r="182" fill="#F6B445" />
+      <circle cx="200" cy="200" r="170" fill={`url(#kwDiscFill-${uid})`} />
+      <g clipPath={`url(#kwDiscClip-${uid})`}>
+        <g className="kw-disc-grid" stroke="#D98A20" strokeOpacity=".42" strokeWidth="9" strokeLinecap="round">
+          {lines.map((p, i) => (
+            <React.Fragment key={i}>
+              <line className="kw-draw" pathLength="1" x1={p} y1="24" x2={p} y2="376" />
+              <line className="kw-draw" pathLength="1" x1="24" y1={p} x2="376" y2={p} />
+            </React.Fragment>
+          ))}
+        </g>
+        <rect className="kw-sheen" x="-160" y="-60" width="110" height="520" fill={`url(#kwDiscSheen-${uid})`} />
+      </g>
+      <circle cx="200" cy="200" r="170" fill="none" stroke="#fff" strokeOpacity=".45" strokeWidth="3" />
+    </svg>
   );
 }
 
+// 와플이: every frame stacked; only the one with `.on` shows.
+function Sprite({ eagerFront }) {
+  return FRAMES.map((f) => (
+    <img key={f.k} src={f.src} data-f={f.k} className={f.k === 'front' ? 'on' : undefined}
+      alt={f.k === 'front' ? '키즈와플 캐릭터 와플이가 웃으며 서 있다' : ''}
+      width="492" height="640" draggable="false" decoding="async"
+      loading={f.k === 'front' && eagerFront ? 'eager' : 'lazy'}
+      fetchpriority={f.k === 'front' && eagerFront ? 'high' : undefined} />
+  ));
+}
+
+function Bubble({ text }) {
+  return <span className="kw-bubble" aria-hidden="true"><span className="kw-bubble-in">{text}</span></span>;
+}
+
+// --- the stage ----------------------------------------------------------------------------
 export function HeroStage({ mobile = false }) {
-  const g = mobile ? GEO.mobile : GEO.desktop;
-  const W = g.maxW; // the server frame is laid out at the max width; the browser re-measures
-  const sizePx = Math.round(g.item * W);
-  const uid = mobile ? 'm' : 'd';
-  const d = blobPath(200, 200, blobRadii(g.blob.r * 400, 0, 0));
   return (
-    <div data-kw="stage" className="kw-stage" style={{ width: `min(100%, ${g.maxW}px)`, aspectRatio: `1 / ${g.ratio}` }}>
-      <span className="kw-glow" data-depth="-4" aria-hidden="true" />
-      <svg className="kw-blob" data-depth="-8" viewBox="0 0 400 400" aria-hidden="true"
-        style={{ left: `${(g.blob.cx - 0.5) * 100}%`, top: `${(g.blob.cy - 0.5) / g.ratio * 100}%`, height: `${100 / g.ratio}%` }}>
-        <defs>
-          <radialGradient id={`kwBlobFill-${uid}`} cx="38%" cy="30%" r="80%">
-            <stop offset="0" stopColor="#FFE08A" />
-            <stop offset=".55" stopColor="#FBC54B" />
-            <stop offset="1" stopColor="#F4A93A" />
-          </radialGradient>
-          <linearGradient id={`kwSheen-${uid}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#fff" stopOpacity="0" />
-            <stop offset=".5" stopColor="#fff" stopOpacity=".5" />
-            <stop offset="1" stopColor="#fff" stopOpacity="0" />
-          </linearGradient>
-          <clipPath id={`kwBlobClip-${uid}`}><path className="kw-blob-shape" d={d} /></clipPath>
-        </defs>
-        <path className="kw-blob-shape" d={d} fill={`url(#kwBlobFill-${uid})`} />
-        <g clipPath={`url(#kwBlobClip-${uid})`}>
-          <g className="kw-grid" transform="rotate(-8 200 200)" stroke="#D88E22" strokeOpacity=".3" strokeWidth="3" strokeLinecap="round">
-            {Array.from({ length: 11 }, (_, i) => 40 + i * 32).map((p, i) => (
-              <React.Fragment key={i}>
-                <line className="kw-draw" pathLength="1" x1={p} y1="-20" x2={p} y2="420" />
-                <line className="kw-draw" pathLength="1" x1="-20" y1={p} x2="420" y2={p} />
-              </React.Fragment>
-            ))}
-          </g>
-          <rect className="kw-sheen" x="-160" y="-60" width="120" height="520" fill={`url(#kwSheen-${uid})`} />
-        </g>
-      </svg>
-      <svg className="kw-ring" data-depth="6" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"
-        style={{ left: `${(g.orbit.cx - g.orbit.rx) * 100}%`, top: `${(g.orbit.cy - g.orbit.ry) / g.ratio * 100}%`, width: `${g.orbit.rx * 200}%`, height: `${(g.orbit.ry * 200) / g.ratio}%` }}>
-        <ellipse cx="50" cy="50" rx="49.5" ry="48.5" fill="none" stroke="#2E211A" strokeOpacity=".16" strokeWidth="1.2" strokeDasharray="2 7" vectorEffect="non-scaling-stroke" />
-      </svg>
-      <div className="kw-orbit">
-        {ORBIT.map((it, i) => <OrbitItem key={it.name} it={it} i={i} sizePx={sizePx} pose={orbitPose(i, REST_ANGLE, W, g)} />)}
+    <div data-kw="stage" className="kw-stage" style={{ width: `min(100%, ${mobile ? STAGE_MAX.mobile : STAGE_MAX.desktop}px)` }}>
+      <span className="kw-glow" aria-hidden="true" />
+      <WaffleDisc uid={mobile ? 'm' : 'd'} />
+      <span className="kw-shadow" aria-hidden="true" />
+      <button type="button" className="kw-waple" aria-label="와플이와 인사하기">
+        <span className="kw-sprite"><Sprite eagerFront /></span>
+      </button>
+      <Bubble text={LINES[0]} />
+      <canvas className="kw-fx" aria-hidden="true" />
+    </div>
+  );
+}
+
+// Full-screen intro. Shown only while <html> has `kw-intro` (first visit, motion allowed).
+export function IntroOverlay() {
+  return (
+    <div data-kw="ov" className="kw-ov">
+      <span className="kw-ov-bg" />
+      <span className="kw-ov-rays" />
+      <div className="kw-ov-group">
+        <WaffleDisc uid="ov" />
+        <span className="kw-ov-ring" />
+        <span className="kw-shadow" />
+        <span className="kw-waple"><span className="kw-sprite"><Sprite eagerFront /></span></span>
+        <Bubble text={LINES[0]} />
       </div>
-      <span className="kw-hero" data-depth="4" style={{ width: `${g.hero * 100}%` }}>
-        <img src={waple} alt="키즈와플 캐릭터 와플이가 두 팔을 벌리고 웃고 있다" width="1080" height="810" fetchpriority="high" draggable="false" />
-      </span>
-      <canvas className="kw-sparks" data-depth="16" aria-hidden="true" />
+      <canvas className="kw-ov-fx" aria-hidden="true" />
+      <button type="button" className="kw-ov-skip">건너뛰기</button>
     </div>
   );
 }
@@ -170,7 +156,395 @@ export function HopText({ text, mark }) {
   ));
 }
 
-// --- motion engine ------------------------------------------------------------------------
+// --- particles ----------------------------------------------------------------------------
+const COLORS = ['#FBC54B', '#FF8A3D', '#EE8383', '#8DBF57', '#7FB3E0', '#FFFFFF'];
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+function drawParticle(ctx, p, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.rot);
+  const s = p.size;
+  if (p.kind === 'waffle') {
+    // a tiny waffle square: rounded tile with a 2×2 grid
+    const h = s / 2, r = s * 0.22;
+    ctx.fillStyle = '#FBC54B';
+    ctx.beginPath();
+    ctx.moveTo(-h + r, -h); ctx.arcTo(h, -h, h, h, r); ctx.arcTo(h, h, -h, h, r); ctx.arcTo(-h, h, -h, -h, r); ctx.arcTo(-h, -h, h, -h, r);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(217,138,32,.75)';
+    ctx.lineWidth = Math.max(1, s * 0.12);
+    ctx.beginPath();
+    for (const q of [-h / 3, h / 3]) { ctx.moveTo(q, -h * 0.8); ctx.lineTo(q, h * 0.8); ctx.moveTo(-h * 0.8, q); ctx.lineTo(h * 0.8, q); }
+    ctx.stroke();
+  } else if (p.kind === 'star') {
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.moveTo(0, -s); ctx.quadraticCurveTo(0, 0, s, 0); ctx.quadraticCurveTo(0, 0, 0, s);
+    ctx.quadraticCurveTo(0, 0, -s, 0); ctx.quadraticCurveTo(0, 0, 0, -s);
+    ctx.fill();
+  } else if (p.kind === 'heart') {
+    ctx.fillStyle = p.color;
+    const k = s / 2;
+    ctx.beginPath();
+    ctx.moveTo(0, k * 0.9);
+    ctx.bezierCurveTo(-k * 1.6, -k * 0.2, -k * 0.7, -k * 1.5, 0, -k * 0.55);
+    ctx.bezierCurveTo(k * 0.7, -k * 1.5, k * 1.6, -k * 0.2, 0, k * 0.9);
+    ctx.fill();
+  } else if (p.kind === 'strip') {
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-s / 2, -s / 5, s, s / 2.5);
+  } else {
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(0, 0, s / 2, 0, TAU); ctx.fill();
+  }
+  ctx.restore();
+}
+
+// A burst of confetti from (x, y): waffle tiles, stars, hearts and paper strips, with gravity.
+function burst(list, x, y, n, power) {
+  for (let i = 0; i < n; i++) {
+    const a = rnd(-Math.PI * 0.95, -Math.PI * 0.05);
+    const v = rnd(0.35, 1) * power;
+    const r = Math.random();
+    list.push({
+      x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, rot: rnd(0, TAU), vr: rnd(-0.012, 0.012),
+      kind: r < 0.32 ? 'waffle' : r < 0.55 ? 'star' : r < 0.68 ? 'heart' : r < 0.88 ? 'strip' : 'dot',
+      color: pick(COLORS), size: rnd(7, 15) * (power > 1 ? 1.2 : 1), life: 0, max: rnd(1100, 1700)
+    });
+  }
+}
+// Advance and draw burst particles (px per ms). Returns whether any are left.
+function stepBurst(ctx, list, dt) {
+  for (let i = list.length - 1; i >= 0; i--) {
+    const p = list[i];
+    p.life += dt;
+    if (p.life > p.max) { list.splice(i, 1); continue; }
+    p.vy += 0.0016 * dt; p.vx *= Math.pow(0.996, dt); p.vy *= Math.pow(0.998, dt);
+    p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    drawParticle(ctx, p, Math.min(1, (p.max - p.life) / 300));
+  }
+  return list.length > 0;
+}
+
+function fitCanvas(canvas) {
+  const r = canvas.getBoundingClientRect();
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+  return { w: r.width, h: r.height, dpr };
+}
+
+const setFrame = (sprite, k) => {
+  if (sprite.dataset.f === k) return;
+  sprite.dataset.f = k;
+  for (const img of sprite.children) img.classList.toggle('on', img.dataset.f === k);
+};
+
+// --- the intro overlay ----------------------------------------------------------------------
+// Plays the overlay; resolves when it is gone. `getTarget` gives the stage's rect for the hand-off
+// (null on phones, where the stage is below the fold and the overlay zooms away instead).
+function playOverlay(ov, { k, getTarget, onExit }) {
+  const group = ov.querySelector('.kw-ov-group');
+  const bg = ov.querySelector('.kw-ov-bg');
+  const rays = ov.querySelector('.kw-ov-rays');
+  const disc = group.querySelector('.kw-disc');
+  const grid = [...group.querySelectorAll('.kw-disc-grid .kw-draw')];
+  const ring = group.querySelector('.kw-ov-ring');
+  const shadow = group.querySelector('.kw-shadow');
+  const waple = group.querySelector('.kw-waple');
+  const sprite = group.querySelector('.kw-sprite');
+  const bubble = group.querySelector('.kw-bubble-in');
+  const skipBtn = ov.querySelector('.kw-ov-skip');
+  const canvas = ov.querySelector('.kw-ov-fx');
+  const ctx = canvas.getContext('2d');
+  let cv = fitCanvas(canvas);
+  const confetti = [];
+
+  let S = 0, baseX = 0, baseY = 0, flip = null, burstDone = false, exited = false;
+  const measure = () => { S = group.offsetWidth; baseX = group.offsetLeft; baseY = group.offsetTop; cv = fitCanvas(canvas); };
+  measure();
+
+  const frame = (t, dt) => {
+    // backdrop and sunburst
+    const exitP = seg(t, T.exit.delay, T.exit.duration);
+    const fade = 1 - easeInOutCubic(seg(t, T.exit.delay + 120, T.exit.duration - 160));
+    bg.style.opacity = fade.toFixed(3);
+    const rp = easeOutExpo(seg(t, T.rays.delay, T.rays.duration));
+    rays.style.opacity = (fade * rp).toFixed(3);
+    rays.style.transform = `translate(-50%,-50%) scale(${(0.4 + 0.6 * rp).toFixed(3)}) rotate(${(t * 0.012).toFixed(2)}deg)`;
+
+    // the whole group: a little shake on landing, then the hand-off
+    const sinceLand = t - T.land;
+    let gx = 0, gy = sinceLand > 0 ? Math.sin(sinceLand / 24) * Math.exp(-sinceLand / 110) * 0.022 * S : 0;
+    let gs = 1, gOpacity = 1;
+    if (exitP > 0) {
+      if (!exited) { exited = true; flip = getTarget && getTarget(); if (onExit) onExit(); }
+      const e = easeInOutCubic(exitP);
+      if (flip) {
+        gx = (flip.left - baseX) * e; gy = (flip.top - baseY) * e; gs = 1 + (flip.width / S - 1) * e;
+      } else {
+        gs = 1 - 0.35 * e; gx = gy = (1 - gs) * S / 2; gOpacity = 1 - easeInOutCubic(seg(t, T.exit.delay, T.exit.duration * 0.8));
+      }
+    }
+    group.style.transform = `translate(${gx.toFixed(1)}px,${gy.toFixed(1)}px) scale(${gs.toFixed(4)})`;
+    group.style.opacity = gOpacity.toFixed(3);
+
+    // the waffle draws itself and thumps when 와플이 lands
+    const dp = springOut(seg(t, T.disc.delay, T.disc.duration));
+    const thump = sinceLand > 0 ? 1 + 0.05 * wobble(seg(t, T.land, 600)) : 1;
+    disc.style.transform = `scale(${(dp * thump).toFixed(4)}) rotate(${(-80 * (1 - easeOutExpo(seg(t, T.disc.delay, T.disc.duration)))).toFixed(2)}deg)`;
+    disc.style.opacity = Math.min(1, seg(t, T.disc.delay, 160)).toFixed(3);
+    grid.forEach((l, i) => {
+      l.style.strokeDashoffset = (1 - easeOutExpo(seg(t, T.grid.delay + (i >> 1) * T.grid.stagger + (i % 2) * 50, T.grid.duration))).toFixed(3);
+    });
+
+    // 와플이: falls spinning, squashes on landing, waves hello, turns to the front for the hand-off
+    const p = seg(t, T.drop.delay, T.drop.duration);
+    let y = 0, sx = 1, sy = 1, rot = 0, f = 'front';
+    if (t < T.drop.delay) waple.style.opacity = '0';
+    else waple.style.opacity = '1';
+    if (t < T.land) {
+      y = -(1 - p * p) * (window.innerHeight * 0.75 + S * 0.4);
+      f = spinFrame(p, T.drop.turns);
+      rot = -10 * (1 - p);
+      sy = 1 + 0.08 * p; sx = 1 - 0.05 * p; // stretched by the fall
+    } else {
+      const w = wobble(seg(t, T.squash.delay, T.squash.duration));
+      sy = 1 - 0.2 * w; sx = 1 + 0.14 * w;
+      if (t >= T.wave.delay && t < T.exit.delay) {
+        f = 'wave';
+        y = -Math.sin(Math.PI * seg(t, T.wave.delay, 380)) * 0.07 * S;
+      }
+    }
+    setFrame(sprite, f);
+    waple.style.transform = `translateY(${y.toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${sx.toFixed(3)},${sy.toFixed(3)})`;
+    const near = t < T.land ? p * p : 1;
+    const hop = y < 0 && t >= T.land ? 1 + y / (0.25 * S) : 1;
+    shadow.style.opacity = (t < T.drop.delay ? 0 : (0.15 + 0.65 * near) * hop).toFixed(3);
+    shadow.style.transform = `scale(${((0.3 + 0.7 * near) * sx * hop).toFixed(3)},${(0.3 + 0.7 * near).toFixed(3)})`;
+
+    // shockwave ring
+    const q = seg(t, T.land, 720);
+    ring.style.opacity = (sinceLand > 0 ? (1 - q) * 0.9 : 0).toFixed(3);
+    ring.style.transform = `scale(${(0.2 + 2.1 * easeOutExpo(q)).toFixed(3)},${((0.2 + 2.1 * easeOutExpo(q)) * 0.32).toFixed(3)})`;
+
+    // speech bubble
+    const bIn = springOut(seg(t, T.bubble.delay, T.bubble.duration));
+    const bOut = 1 - easeInOutCubic(seg(t, T.bubble.out, 200));
+    bubble.style.transform = `scale(${(bIn * bOut).toFixed(3)})`;
+    bubble.style.opacity = (t < T.bubble.delay ? 0 : bOut).toFixed(3);
+
+    skipBtn.style.opacity = (Math.min(1, seg(t, 300, 400)) * fade).toFixed(3);
+
+    // confetti
+    if (!burstDone && sinceLand >= 0) {
+      burstDone = true;
+      const r = waple.getBoundingClientRect();
+      burst(confetti, r.left + r.width / 2, r.bottom - r.height * 0.1, window.innerWidth < 600 ? 46 : 70, window.innerWidth < 600 ? 0.95 : 1.35);
+    }
+    ctx.setTransform(cv.dpr, 0, 0, cv.dpr, 0, 0);
+    ctx.clearRect(0, 0, cv.w, cv.h);
+    stepBurst(ctx, confetti, dt);
+  };
+
+  return new Promise((resolve) => {
+    let raf = 0, t0 = 0, last = 0, done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measure);
+      ov.style.display = 'none';
+      resolve();
+    };
+    const loop = (now) => {
+      if (!t0) { t0 = now; last = now; }
+      const t = (now - t0) / k;
+      frame(t, Math.min(50, now - last));
+      last = now;
+      if (t >= T.end && confetti.length === 0) return finish();
+      if (t >= T.end) { bg.style.opacity = '0'; ov.style.pointerEvents = 'none'; }
+      raf = requestAnimationFrame(loop);
+    };
+    frame(0, 0);
+    ov.classList.remove('kw-ov-wait');
+    raf = requestAnimationFrame(loop);
+    window.addEventListener('resize', measure);
+    // Skip: a quick fade, then the page as it is.
+    const skip = () => {
+      if (done) return;
+      if (!exited && onExit) { exited = true; onExit(true); }
+      ov.style.pointerEvents = 'none';
+      const a = ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, easing: 'ease-out', fill: 'forwards' });
+      a.onfinish = finish;
+      setTimeout(finish, 400);
+    };
+    ov.skip = skip;
+  });
+}
+
+// --- the stage runtime --------------------------------------------------------------------
+// Ambient life for 와플이 on the stage. `entrance`: 'drop' (falls in when first seen), 'hello'
+// (a spin in place) or null.
+function runStage(stage, { mobile, root, entrance }) {
+  const cleanups = [];
+  const waple = stage.querySelector('.kw-waple');
+  const sprite = stage.querySelector('.kw-sprite');
+  const shadow = stage.querySelector('.kw-shadow');
+  const disc = stage.querySelector('.kw-disc');
+  const bubbleWrap = stage.querySelector('.kw-bubble');
+  const bubble = stage.querySelector('.kw-bubble-in');
+  const canvas = stage.querySelector('.kw-fx');
+  const ctx = canvas.getContext('2d');
+  let W = stage.offsetWidth, cv = fitCanvas(canvas);
+  const pad = () => (cv.w - W) / 2; // canvas overhangs the stage on every side
+  const ro = new ResizeObserver(() => { W = stage.offsetWidth; cv = fitCanvas(canvas); });
+  ro.observe(stage); cleanups.push(() => ro.disconnect());
+
+  // drifting floaters: tiny waffles, stars, hearts
+  const floaters = Array.from({ length: mobile ? 9 : 14 }, () => ({
+    u: rnd(0, 1), v: rnd(0, 1), speed: rnd(0.000012, 0.000028), sway: rnd(0.01, 0.03), ph: rnd(0, TAU),
+    rot: rnd(0, TAU), vr: rnd(-0.0006, 0.0006), kind: pick(['waffle', 'waffle', 'star', 'star', 'heart', 'dot']),
+    color: pick(['#FBC54B', '#FF8A3D', '#EE8383', '#FFFFFF', '#8DBF57']), size: rnd(6, 12)
+  }));
+  const confetti = [];
+
+  // what 와플이 is doing: idle, or an action with its own clock
+  let action = null; // { type, t0, dur }
+  let lineIdx = 0, bubbleUntil = 0, lastPointer = -1e9, nextIdle = 5200, idleFlip = 0;
+  let face = 'front', faceAt = 0, hidden = entrance === 'drop';
+  const ptr = { x: 0, tx: 0, on: false };
+
+  const say = (ms, text, dur = 1500) => { bubble.textContent = text; bubbleUntil = ms + dur; bubbleAt = ms; };
+  let bubbleAt = -1e9;
+  const startAction = (ms, type) => { action = { type, t0: ms, dur: type === 'spin' ? 720 : type === 'drop' ? T.entrance.duration : type === 'wave' ? 1100 : 1000 }; };
+
+  if (hidden) waple.style.opacity = shadow.style.opacity = '0';
+
+  const frame = (ms, dt) => {
+    let y = Math.sin(ms / 2600 * TAU) * 0.012 * W, sx = 1, sy = 1 + Math.sin(ms / 1300 * TAU) * 0.008, rot = 0, f = face;
+    let shadowK = 1;
+    if (action) {
+      const p = clamp01((ms - action.t0) / action.dur);
+      if (action.type === 'drop' || action.type === 'spin') {
+        const airEnd = action.type === 'drop' ? 0.62 : 0.6;
+        if (p < airEnd) {
+          const a = p / airEnd;
+          f = spinFrame(a, 1);
+          if (action.type === 'drop') { y = -(1 - a * a) * 0.38 * W; rot = -8 * (1 - a); shadowK = 0.3 + 0.7 * a * a; waple.style.opacity = Math.min(1, a * 4).toFixed(3); }
+          else { y = -Math.sin(Math.PI * a) * 0.2 * W; shadowK = 1 - Math.sin(Math.PI * a) * 0.55; }
+        } else {
+          f = 'front';
+          if (!action.landed) {
+            action.landed = true;
+            burst(confetti, pad() + W * 0.5, pad() + W * 0.88, mobile ? 18 : 26, 0.62);
+            if (action.type === 'spin') say(ms, LINES[(lineIdx = (lineIdx + 1) % LINES.length)]);
+          }
+          const w = wobble((p - airEnd) / (1 - airEnd));
+          sy = 1 - 0.16 * w; sx = 1 + 0.11 * w;
+        }
+      } else if (action.type === 'wave') {
+        f = 'wave';
+        y += -Math.sin(Math.PI * clamp01(p / 0.4)) * 0.05 * W;
+      } else if (action.type === 'look') {
+        f = p < 0.45 ? 'l3' : p < 0.9 ? 'r3' : 'front';
+      }
+      if (p >= 1) { action = null; face = 'front'; faceAt = ms; }
+    } else if (!mobile && ptr.on && ms - lastPointer < 4000) {
+      // turn toward the pointer (well off to either side), with a small pop on each turn
+      const want = ptr.x < -0.62 ? 'l3' : ptr.x > 0.62 ? 'r3' : 'front';
+      if (want !== face) { face = want; faceAt = ms; }
+      f = face;
+    } else if (face !== 'front') { face = 'front'; faceAt = ms; f = face; }
+    if (!action && ms > nextIdle && ms - lastPointer > 2500) {
+      startAction(ms, idleFlip++ % 2 ? 'look' : 'wave');
+      if (idleFlip === 1) say(ms, LINES[0], 1300);
+      nextIdle = ms + 6500 + Math.random() * 2500;
+    }
+    const pop = 1 - 0.06 * wobble(clamp01((ms - faceAt) / 260));
+    setFrame(sprite, f);
+    ptr.x += (ptr.tx - ptr.x) * 0.08;
+    const px = mobile ? 0 : ptr.x * 7;
+    waple.style.transform = `translate(${px.toFixed(1)}px,${y.toFixed(1)}px) rotate(${rot.toFixed(2)}deg) scale(${(sx * (action ? 1 : pop)).toFixed(3)},${sy.toFixed(3)})`;
+    shadow.style.transform = `translateX(${px.toFixed(1)}px) scale(${(shadowK * sx).toFixed(3)},${shadowK.toFixed(3)})`;
+    shadow.style.opacity = (0.8 * shadowK).toFixed(3);
+    disc.style.transform = `translate(${(-px * 0.6).toFixed(1)}px,0)`;
+    // bubble
+    const bIn = springOut(clamp01((ms - bubbleAt) / 420));
+    const bOut = ms > bubbleUntil ? 1 - clamp01((ms - bubbleUntil) / 200) : 1;
+    bubbleWrap.style.opacity = bOut > 0 && ms >= bubbleAt ? '1' : '0';
+    bubble.style.transform = `scale(${(bIn * bOut).toFixed(3)})`;
+    // particles
+    ctx.setTransform(cv.dpr, 0, 0, cv.dpr, 0, 0);
+    ctx.clearRect(0, 0, cv.w, cv.h);
+    for (const q of floaters) {
+      const v = ((q.v - ms * q.speed) % 1 + 1) % 1;
+      const u = q.u + Math.sin(ms / 1000 + q.ph) * q.sway;
+      q.rot += q.vr * dt;
+      drawParticle(ctx, { ...q, x: u * cv.w, y: v * cv.h }, 0.75 * Math.min(1, v * 5, (1 - v) * 5));
+    }
+    stepBurst(ctx, confetti, dt);
+  };
+
+  // pointer and taps
+  if (!mobile) {
+    const onMove = (e) => {
+      const r = stage.getBoundingClientRect();
+      ptr.tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+      ptr.on = true; lastPointer = clock();
+    };
+    const onLeave = () => { ptr.tx = 0; ptr.on = false; };
+    root.addEventListener('pointermove', onMove, { passive: true });
+    root.addEventListener('pointerleave', onLeave);
+    cleanups.push(() => { root.removeEventListener('pointermove', onMove); root.removeEventListener('pointerleave', onLeave); });
+  }
+  const onTap = () => {
+    const ms = clock();
+    if (action && (action.type === 'spin' || action.type === 'drop')) return;
+    startAction(ms, 'spin'); nextIdle = ms + 7000;
+  };
+  waple.addEventListener('click', onTap);
+  cleanups.push(() => waple.removeEventListener('click', onTap));
+
+  // clock that only runs while the loop runs
+  let raf = 0, visible = false, base = 0, runStart = 0, last = 0, started = false;
+  const clock = () => (raf ? base + performance.now() - runStart : base);
+  const loop = (now) => {
+    const ms = base + now - runStart;
+    frame(ms, Math.min(50, now - (last || now)));
+    last = now;
+    raf = requestAnimationFrame(loop);
+  };
+  const start = () => {
+    if (raf || !visible || document.hidden) return;
+    runStart = performance.now(); last = 0;
+    raf = requestAnimationFrame(loop);
+  };
+  const stop = () => { if (!raf) return; base = clock(); cancelAnimationFrame(raf); raf = 0; };
+  const io = new IntersectionObserver(([en]) => {
+    visible = en.isIntersecting;
+    // phones: fall in once most of the stage is on screen
+    if (visible && !started && (entrance !== 'drop' || en.intersectionRatio >= 0.55)) {
+      started = true;
+      if (entrance) {
+        // already in view at once (tall phone): spin hello instead of falling in
+        startAction(clock(), entrance === 'drop' ? 'drop' : 'spin');
+        nextIdle = 4800;
+      }
+      if (hidden) { waple.style.opacity = shadow.style.opacity = ''; hidden = false; }
+    }
+    if (visible) start(); else stop();
+  }, { threshold: [0, 0.35, 0.55, 0.8] });
+  io.observe(stage);
+  const onVis = () => (document.hidden ? stop() : start());
+  document.addEventListener('visibilitychange', onVis);
+  cleanups.push(() => { io.disconnect(); stop(); document.removeEventListener('visibilitychange', onVis); });
+  return () => cleanups.forEach((c) => c());
+}
+
+// --- wiring -------------------------------------------------------------------------------
 const prefersMobile = () => window.matchMedia(MOBILE_QUERY).matches;
 
 export function useHeroIntro(rootRef, mobile) {
@@ -179,17 +553,22 @@ export function useHeroIntro(rootRef, mobile) {
     const root = rootRef.current;
     const stage = root && root.querySelector('[data-kw="stage"]');
     if (!stage) return;
+    const ov = root.querySelector('[data-kw="ov"]');
     const html = document.documentElement;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const intro = html.classList.contains('kw-intro') && !reduce;
+    const intro = !!ov && html.classList.contains('kw-intro') && !reduce;
     const k = mobile ? MOBILE_TIME_SCALE : 1;
-    const g = mobile ? GEO.mobile : GEO.desktop;
     const cleanups = [];
-    const anims = [];
+    let alive = true;
 
-    // Text intro (Web Animations): words rise out of their masks, then the rest of the copy.
+    // Copy intro (Web Animations), held at its start state and released by the overlay's hand-off.
+    const anims = [];
     if (intro) {
-      const play = (el, frames, o) => el && anims.push(el.animate(frames, { fill: 'backwards', easing: EASE.out, ...o, duration: o.duration * k, delay: (o.delay || 0) * k }));
+      const play = (el, frames, o) => {
+        if (!el) return;
+        const a = el.animate(frames, { fill: 'backwards', easing: EASE.out, ...o, duration: o.duration * k, delay: (o.delay - T.exit.delay) * k });
+        a.pause(); anims.push(a);
+      };
       root.querySelectorAll('h1 .kw-word-in').forEach((w, i) =>
         play(w, [{ transform: 'translateY(108%) rotate(4deg)' }, { transform: 'translateY(0) rotate(0)' }], { duration: T.words.duration, delay: T.words.delay + i * T.words.stagger, easing: EASE.expo }));
       play(root.querySelector('h1 .kw-draw'), [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], T.underline);
@@ -200,148 +579,59 @@ export function useHeroIntro(rootRef, mobile) {
       const logo = document.querySelector('.kw-nav a[aria-label$="첫 화면으로"], .kw-mnav a[aria-label$="첫 화면으로"]');
       play(logo, [{ transform: 'scale(.86)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { ...T.logo, easing: EASE.expo });
     }
+    const releaseCopy = (instant) => anims.forEach((a) => { try { instant ? a.finish() : a.play(); } catch (e) { /* done */ } });
 
-    // Stage elements
-    const blobShapes = [...stage.querySelectorAll('.kw-blob-shape')];
-    const blobSvg = stage.querySelector('.kw-blob');
-    const gridLines = [...stage.querySelectorAll('.kw-grid .kw-draw')];
-    const orbs = [...stage.querySelectorAll('.kw-orb')];
-    const hero = stage.querySelector('.kw-hero');
-    const glow = stage.querySelector('.kw-glow');
-    const ring = stage.querySelector('.kw-ring');
-    const canvas = stage.querySelector('.kw-sparks');
-    const layers = [...stage.querySelectorAll('[data-depth]')];
-    const ctx = canvas.getContext('2d');
-
-    let W = 0, H = 0, dpr = 1, sizePx = 0;
-    const measure = () => {
-      const r = stage.getBoundingClientRect();
-      W = r.width; H = r.height; sizePx = Math.round(g.item * W);
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-      orbs.forEach((o) => { o.style.width = o.style.height = sizePx + 'px'; });
-    };
-    measure();
-    const ro = new ResizeObserver(measure); ro.observe(stage); cleanups.push(() => ro.disconnect());
-
-    // Sparkle particles: slow rise, sideways sway, twinkle.
-    const rnd = (a, b) => a + Math.random() * (b - a);
-    const sparks = Array.from({ length: g.particles }, () => ({
-      x: rnd(0.08, 0.92), y: rnd(0.05, 0.95), r: rnd(1.2, 3), v: rnd(0.012, 0.03), sw: rnd(0.004, 0.012), ph: rnd(0, TAU),
-      tw: rnd(1600, 3200), star: Math.random() < 0.3, c: Math.random() < 0.55 ? '255,255,255' : Math.random() < 0.6 ? '251,197,75' : '255,88,0'
-    }));
-    const drawSparks = (ms, fade) => {
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      if (fade <= 0) return;
-      for (const p of sparks) {
-        const y = ((p.y - (ms / 1000) * p.v) % 1 + 1) % 1;
-        const x = p.x + Math.sin(ms / 1000 * 0.9 + p.ph) * p.sw * 4;
-        const a = fade * (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(ms / p.tw * TAU + p.ph))) * Math.min(1, y * 6, (1 - y) * 6);
-        const px = x * W, py = y * H;
-        ctx.fillStyle = `rgba(${p.c},${a.toFixed(3)})`;
-        ctx.beginPath();
-        if (p.star) {
-          const s = p.r * 2.4;
-          ctx.moveTo(px, py - s); ctx.quadraticCurveTo(px, py, px + s, py); ctx.quadraticCurveTo(px, py, px, py + s);
-          ctx.quadraticCurveTo(px, py, px - s, py); ctx.quadraticCurveTo(px, py, px, py - s);
-        } else ctx.arc(px, py, p.r, 0, TAU);
-        ctx.fill();
-      }
-    };
-
-    // Pointer depth (desktop): every layer drifts by its data-depth, smoothed.
-    const ptr = { x: 0, y: 0, tx: 0, ty: 0 };
-    if (!mobile && !reduce) {
-      const onMove = (e) => {
-        const r = stage.getBoundingClientRect();
-        ptr.tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 1.2)));
-        ptr.ty = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 1.2)));
-      };
-      const onLeave = () => { ptr.tx = 0; ptr.ty = 0; };
-      root.addEventListener('pointermove', onMove, { passive: true });
-      root.addEventListener('pointerleave', onLeave);
-      cleanups.push(() => { root.removeEventListener('pointermove', onMove); root.removeEventListener('pointerleave', onLeave); });
-    }
-
-    // One frame of the whole stage at `ms` since it started playing.
-    const startAngle = REST_ANGLE - 0.9; // the orbit sweeps in to its resting angle during the intro
-    const frame = (ms, introOn) => {
-      const t = introOn ? ms / k : 1e9; // intro clock in design milliseconds
-      // blob: grows from a seed with a spring, then breathes and slowly turns
-      const grow = springOut(seg(t, T.blob.delay, T.blob.duration));
-      const d = blobPath(200, 200, blobRadii(g.blob.r * 400 * (0.25 + 0.75 * grow), ms), ms / 60000);
-      blobShapes.forEach((p) => p.setAttribute('d', d));
-      blobSvg.style.opacity = Math.min(1, seg(t, T.blob.delay, 260));
-      glow.style.opacity = easeInOutCubic(seg(t, 0, 900));
-      gridLines.forEach((l, i) => {
-        l.style.strokeDashoffset = (1 - easeOutExpo(seg(t, T.grid.delay + (i >> 1) * T.grid.stagger + (i % 2) * 60, T.grid.duration))).toFixed(3);
-      });
-      // 와플이: settles with a spring (visible from the first frame), then breathes
-      const hs = springOut(seg(t, T.hero.delay, T.hero.duration));
-      const heroY = (1 - hs) * 0.06 * W + Math.sin(ms / 2600 * TAU) * 0.012 * W;
-      // orbit: items fly out from behind 와플이 on a spiral, then keep turning
-      const op = seg(t, T.orbit.delay, T.orbit.duration);
-      const angle = startAngle + 0.9 * easeOutExpo(op) + (ms / ORBIT_PERIOD) * TAU;
-      ring.style.opacity = easeInOutCubic(seg(t, T.orbit.delay, 700));
-      const span = T.orbit.duration - (ORBIT.length - 1) * T.orbit.stagger;
-      orbs.forEach((o, i) => {
-        const pp = clamp01((op * T.orbit.duration - i * T.orbit.stagger) / span);
-        const spread = easeOutExpo(pp);
-        const pose = orbitPose(i, angle, W, g);
-        const cx = g.orbit.cx * W, cy = g.orbit.cy * W * 0.9;
-        const x = cx + (pose.x - cx) * spread, y = cy + (pose.y - cy) * spread;
-        const bob = Math.sin(ms / (2200 + i * 260) + i) * 0.008 * W;
-        o.style.transform = `translate(${(x - sizePx / 2 + ptr.x * 10).toFixed(1)}px, ${(y - sizePx / 2 + bob + ptr.y * 6).toFixed(1)}px) scale(${(pose.scale * (0.4 + 0.6 * springOut(pp))).toFixed(3)})`;
-        o.style.opacity = (pose.opacity * Math.min(1, pp * 3)).toFixed(3);
-        o.style.zIndex = pose.front ? 4 : 1;
-      });
-      // pointer depth
-      ptr.x += (ptr.tx - ptr.x) * 0.06; ptr.y += (ptr.ty - ptr.y) * 0.06;
-      for (const el of layers) {
-        const dep = +el.dataset.depth;
-        const extra = el === hero ? ` translateY(${heroY.toFixed(1)}px) scale(${(0.94 + 0.06 * hs).toFixed(4)})` : '';
-        el.style.transform = `translate(${(ptr.x * dep).toFixed(2)}px, ${(ptr.y * dep * 0.6).toFixed(2)}px)${extra}`;
-      }
-      drawSparks(ms, easeInOutCubic(seg(t, T.sparks.delay, 900)));
-    };
-
+    if (intro) { ov.style.display = 'block'; ov.classList.add('kw-ov-wait'); }
     html.classList.remove('kw-intro');
     try { sessionStorage.setItem('kw-intro', '1'); } catch (e) { /* private mode */ }
-    if (reduce) { frame(0, false); return () => cleanups.forEach((c) => c()); }
+    if (reduce) return undefined;
+    if (!intro) {
+      cleanups.push(runStage(stage, { mobile, root, entrance: mobile ? 'drop' : 'hello' }));
+      return () => cleanups.forEach((c) => c());
+    }
 
-    // Run only while the stage is on screen and the tab is visible.
-    let raf = 0, visible = false, t0 = 0, pausedAt = 0, introOn = intro, started = false;
-    const loop = (now) => {
-      if (!t0) t0 = now;
-      const ms = now - t0;
-      if (introOn && ms / k > T.end) introOn = false;
-      frame(ms, introOn);
-      raf = requestAnimationFrame(loop);
-    };
-    const start = () => {
-      if (raf || !visible || document.hidden) return;
-      if (pausedAt && t0) t0 += performance.now() - pausedAt;
-      pausedAt = 0;
-      raf = requestAnimationFrame(loop);
-    };
-    const stop = () => { if (!raf) return; cancelAnimationFrame(raf); raf = 0; pausedAt = performance.now(); };
-    // Hold the start frame until the stage is on screen (on phones it starts below the fold).
-    frame(0, introOn);
-    const io = new IntersectionObserver(([en]) => {
-      visible = en.isIntersecting;
-      if (visible) { if (!started) { started = true; t0 = 0; } start(); } else stop();
-    }, { threshold: 0.2 });
-    io.observe(stage);
-    const onVis = () => (document.hidden ? stop() : start());
-    document.addEventListener('visibilitychange', onVis);
-    cleanups.push(() => { io.disconnect(); stop(); document.removeEventListener('visibilitychange', onVis); });
+    // The overlay waits (briefly) for 와플이's frames so the spin never shows a gap.
+    if (!mobile) stage.style.visibility = 'hidden';
+    const imgs = [...ov.querySelectorAll('.kw-sprite img')];
+    imgs.forEach((i) => { i.loading = 'eager'; });
+    const ready = Promise.race([
+      Promise.all(imgs.map((i) => (i.decode ? i.decode().catch(() => {}) : null))),
+      new Promise((r) => setTimeout(r, 1500))
+    ]);
+    let skip = null, skipped = false;
+    ready.then(() => {
+      if (!alive || skipped) return;
+      const done = playOverlay(ov, {
+        k,
+        getTarget: mobile ? null : () => stage.getBoundingClientRect(),
+        onExit: (instant) => releaseCopy(instant)
+      });
+      skip = ov.skip;
+      return done;
+    }).then(() => {
+      if (!alive || skipped) return;
+      stage.style.visibility = '';
+      cleanups.push(runStage(stage, { mobile, root, entrance: mobile ? 'drop' : null }));
+    });
 
-    // Any interaction ends the text intro at once (the stage keeps its own pace).
-    const skip = () => anims.forEach((a) => { try { a.finish(); } catch (e) { /* done */ } });
-    const events = ['pointerdown', 'wheel', 'keydown', 'touchstart'];
-    events.forEach((ev) => window.addEventListener(ev, skip, { once: true, passive: true }));
-    cleanups.push(() => events.forEach((ev) => window.removeEventListener(ev, skip)));
-    return () => cleanups.forEach((c) => c());
+    // Any interaction skips the intro.
+    const onSkip = () => {
+      if (skip) return skip();
+      if (skipped) return;
+      skipped = true;
+      ov.style.display = 'none'; stage.style.visibility = ''; releaseCopy(true);
+      cleanups.push(runStage(stage, { mobile, root, entrance: mobile ? 'drop' : null }));
+    };
+    const skipBtn = ov.querySelector('.kw-ov-skip');
+    skipBtn.addEventListener('click', onSkip);
+    const events = ['wheel', 'keydown', 'touchmove'];
+    events.forEach((ev) => window.addEventListener(ev, onSkip, { once: true, passive: true }));
+    ov.addEventListener('pointerdown', onSkip);
+    cleanups.push(() => {
+      skipBtn.removeEventListener('click', onSkip);
+      ov.removeEventListener('pointerdown', onSkip);
+      events.forEach((ev) => window.removeEventListener(ev, onSkip));
+    });
+    return () => { alive = false; cleanups.forEach((c) => c()); };
   }, [mobile]);
 }

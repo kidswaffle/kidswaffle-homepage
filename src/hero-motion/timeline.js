@@ -14,21 +14,29 @@ export const EASE = { out: css(BEZIER.out), inOut: css(BEZIER.inOut), bounce: cs
 // Phones play the same intro a little faster.
 export const MOBILE_TIME_SCALE = 0.85;
 
-// Website intro (about 2.6s). The headline is up within 0.9s; the stage then keeps moving on its own.
+// Website intro "와플이 등장" (about 3.1s, first visit per tab only). A full-screen overlay:
+// the round waffle draws itself, 와플이 drops in spinning through the turnaround frames, lands
+// with a squash and a burst, waves hello, then flies into the hero stage while the headline rises.
 export const HERO_INTRO = {
-  // copy
-  logo: { delay: 0, duration: 700 },
-  words: { delay: 80, duration: 900, stagger: 70 },
-  underline: { delay: 820, duration: 700 },
-  rise: { delay: 420, duration: 800, stagger: 90 },
-  cta: { delay: 2100, duration: 650 },
-  // stage
-  blob: { delay: 120, duration: 1100 },
-  grid: { delay: 420, duration: 900, stagger: 35 },
-  hero: { delay: 200, duration: 1000 },
-  orbit: { delay: 700, duration: 1500, stagger: 110 },
-  sparks: { delay: 1100 },
-  end: 2800
+  // overlay
+  rays: { delay: 0, duration: 900 },
+  disc: { delay: 60, duration: 750 },
+  grid: { delay: 260, duration: 520, stagger: 28 },
+  drop: { delay: 520, duration: 760, turns: 2 },
+  land: 1280,
+  squash: { delay: 1280, duration: 520 },
+  wave: { delay: 1720, duration: 700 },
+  bubble: { delay: 1780, duration: 420, out: 2380 },
+  exit: { delay: 2440, duration: 680 },
+  // copy (starts as 와플이 heads for the stage)
+  logo: { delay: 2500, duration: 600 },
+  words: { delay: 2520, duration: 820, stagger: 60 },
+  underline: { delay: 3050, duration: 600 },
+  rise: { delay: 2700, duration: 700, stagger: 70 },
+  cta: { delay: 3700, duration: 650 },
+  end: 3120,
+  // the stage's own entrance when there is no overlay (repeat visits, phones scrolling down)
+  entrance: { duration: 820 }
 };
 
 // Video (YouTube intro, Reels, Kakao channel): the same beats, given room to breathe. 7s.
