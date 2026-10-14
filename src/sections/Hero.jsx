@@ -5,6 +5,7 @@ import { Icon } from '../components/core/Icon.jsx';
 import { Chip } from '../components/core/Chip.jsx';
 import { LogoTicker } from '../components/marketing/LogoTicker.jsx';
 import { KAKAO, goto, useIsMobile } from '../lib.js';
+import logo from '../assets/logo.png';
 import { NAV } from './Mobile.jsx';
 import waple from '../assets/characters/waple-drop-in.webp';
 import shinsegae from '../assets/partners/shinsegae.webp';
@@ -85,7 +86,7 @@ export function Hero() {
       <Blob color="var(--kw-sky-tint)" size={210} top={480} right={-60} delay={0.7} opacity={.6} />
 
       <div style={{ position: 'relative', maxWidth: 'var(--container)', margin: '0 auto', padding: '0 var(--gutter)' }}>
-        <NavBar sticky active="" ctaLabel="카카오톡 상담하기" ctaHref={KAKAO} secondaryLabel=""
+        <NavBar sticky logoSrc={logo} active="" ctaLabel="카카오톡 상담하기" ctaHref={KAKAO} secondaryLabel=""
           onNavigate={(l) => goto(NAV[l])()}
           items={Object.keys(NAV).map((label) => ({ label }))} />
       </div>
