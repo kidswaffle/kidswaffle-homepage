@@ -1,0 +1,88 @@
+=== https://www.kidswaffle.com/
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: iad1::zhvcx-1792319768704-3b6c244a4d79
+
+=== https://kidswaffle.com/
+HTTP/2 308 
+location: https://www.kidswaffle.com/
+server: Vercel
+x-vercel-id: iad1::9djwb-1792319768905-98bc23eb9329
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: iad1::8twnm-1792319769036-691272a3af36
+
+=== https://www.kidswaffle.com/robots.txt
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: iad1::9r2dp-1792319769160-9aacf53470c6
+
+=== https://kidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app/
+HTTP/2 302 
+location: https://vercel.com/sso-api?url=https%3A%2F%2Fkidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app%2F&nonce=ae6e871e798e2a3b83157c6e8f988813c22bbe3e41969560a016c75cb24c6fc2
+server: Vercel
+x-vercel-id: iad1::t6xmx-1792319769321-34dc6bb7fe28
+HTTP/2 307 
+location: /login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fkidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app%252F%26nonce%3Dae6e871e798e2a3b83157c6e8f988813c22bbe3e41969560a016c75cb24c6fc2
+server: Vercel
+x-vercel-cache: MISS
+x-vercel-id: iad1::sfo1::mc8ff-1792319769434-e94388d06b74
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: iad1::pws5s-1792319769727-d5b2a1dd81d3
+
+=== https://kidswaffle-homepage.vercel.app/
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: iad1::p4fpb-1792319769936-98faed63c534
+
+=== https://kidswaffle-homepage-kidswaffles-projects.vercel.app/
+HTTP/2 302 
+location: https://vercel.com/sso-api?url=https%3A%2F%2Fkidswaffle-homepage-kidswaffles-projects.vercel.app%2F&nonce=c6cbde16417aeaf0d125b145de81b34528da379811af98320e32841e323b2969
+server: Vercel
+x-vercel-id: iad1::fnl5f-1792319770096-9710a8714209
+HTTP/2 307 
+location: /login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fkidswaffle-homepage-kidswaffles-projects.vercel.app%252F%26nonce%3Dc6cbde16417aeaf0d125b145de81b34528da379811af98320e32841e323b2969
+server: Vercel
+x-vercel-cache: MISS
+x-vercel-id: iad1::sfo1::dm8ff-1792319770211-4439364435dd
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: iad1::msbnc-1792319770538-d93f905ad8a6
+
+=== DNS kidswaffle.com
+64.29.17.65
+216.198.79.65
+ivan.ns.cloudflare.com.
+bristol.ns.cloudflare.com.
+=== DNS www.kidswaffle.com
+2a5109233ffdff6f.vercel-dns-017.com.
+64.29.17.65
+216.198.79.65
+2a5109233ffdff6f.vercel-dns-017.com.
+ivan.ns.cloudflare.com.
+bristol.ns.cloudflare.com.
+=== PATH /program
+404 text/plain; charset=utf-8
+The page could not be found  NOT_FOUND  iad1::nfxr8-1792319771008-dfa02e8eda69 
+=== PATH /about
+404 text/plain; charset=utf-8
+The page could not be found  NOT_FOUND  iad1::sx8jn-1792319771147-b2269fa4d69f 
+=== PATH /notfound-test
+404 text/plain; charset=utf-8
+The page could not be found  NOT_FOUND  iad1::2s888-1792319771401-8b78cfa6eda8 
+=== PATH /index.html
+200 text/html; charset=utf-8
+<!doctype html> <html lang="ko"> <head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width,initial-scale=1"> <meta name="theme-color" content="#FFF7EC"> <link rel="icon" type="im
+=== PATH /api/videos
+200 application/json; charset=utf-8
+{"videos":[{"id":"pIXiIoExVQg","title":"장난감 정리할 시간! 🧸 제자리에 쏙! | 문화센터, 어린이집 등원 생활습관동요ㅣ정리송 ㅣ키즈와플","published":"2026-10-14T0
+=== PATH /sitemap.xml
+200 application/xml
+<?xml version="1.0" encoding="UTF-8"?> <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">   <url>     <loc>https://www.kidswaffle.com/</loc>     <lastmod>2026-10-14</lastmod>     <changefreq
