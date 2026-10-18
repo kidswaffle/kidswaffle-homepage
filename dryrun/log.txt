@@ -2,3 +2,8 @@ classkok suwon: 12 reviews, newest 2026.09.29
 classkok unjeong: 12 reviews, newest 2026.09.23
 naver: no API keys, skipped
 dry run: 24 classkok reviews, 0 blog posts, AI off
+classkok suwon: 12 reviews, newest 2026.09.29
+classkok unjeong: 12 reviews, newest 2026.09.23
+naver: no API keys, skipped
+dry run: 24 classkok reviews, 0 blog posts
+judged by rules: 20 checked, 19 fit, new: 6, dropped: 0
