@@ -1,0 +1,56 @@
+[
+ {
+  "url": "https://www.classkok.com/mcm/selectMenuList.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"list\":[{\"groupRownum\":\"1\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"마이클래스\",\"linkUrl\":\"/mml/initTkcrsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/edd69056-2823-4b26-af4b-294f1c79cfc4.svg\"},{\"groupRownum\":\"2\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"자녀회원\",\"linkUrl\":\"/mml/initChldrMshp.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/9a70da99-e266-4139-9583-b56f45e0b905.svg\"},{\"groupRownum\":\"3\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 쿠폰\",\"linkUrl\":\"/cpn/myCpnList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20231019/914cbad9-018a-4110-895f-d2cf62628a24.svg\"},{\"groupRownum\":\"4\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 수강 후기\",\"linkUrl\":\"/mml/initWrdtAvlblRvwList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/00d9c58d-92cb-46c2-b1f0-09a3aad188fa.svg\"},{\"groupRownum\":\"5\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 문의 내역\",\"linkUrl\":\"/mml/initMyAskDtlsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/ce74c05c-d10e-4021-839a-e94e95a7a1a1.svg\"},{\"groupRownum\":\"6\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"대기 신청 내역\",\"linkUrl\":\"/mml/initWtngLctrList.do?\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221027/88f73c30-e2ed-4b07-b94e-8c90c3c3d9fa.svg\"},{\"groupRownum\":\"1\",\"menuCtgryNm\":\"고객센터\",\"menuNm\":\"공지사항\",\"linkUrl\":\"/mct/initAnnList.do\",\"loginEsntlYn\":\"N\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/2aae3a60-abbb-47a2-a511-60fd05091eab.svg\"},{\"grou"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectStoreEmad.do",
+  "method": "POST",
+  "post": "{\"storeCd\":\"02\"}",
+  "body": "{\"storeEmad\":\"classkok_suwon@shinsegae.com\",\"curStoreCd\":\"02\"}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/initMyWishList.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"totCnt\":0,\"storeList\":[],\"myWishList\":[],\"ctgryCdList\":[]}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectMenuList.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"list\":[{\"groupRownum\":\"1\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"마이클래스\",\"linkUrl\":\"/mml/initTkcrsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/edd69056-2823-4b26-af4b-294f1c79cfc4.svg\"},{\"groupRownum\":\"2\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"자녀회원\",\"linkUrl\":\"/mml/initChldrMshp.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/9a70da99-e266-4139-9583-b56f45e0b905.svg\"},{\"groupRownum\":\"3\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 쿠폰\",\"linkUrl\":\"/cpn/myCpnList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20231019/914cbad9-018a-4110-895f-d2cf62628a24.svg\"},{\"groupRownum\":\"4\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 수강 후기\",\"linkUrl\":\"/mml/initWrdtAvlblRvwList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/00d9c58d-92cb-46c2-b1f0-09a3aad188fa.svg\"},{\"groupRownum\":\"5\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 문의 내역\",\"linkUrl\":\"/mml/initMyAskDtlsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/ce74c05c-d10e-4021-839a-e94e95a7a1a1.svg\"},{\"groupRownum\":\"6\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"대기 신청 내역\",\"linkUrl\":\"/mml/initWtngLctrList.do?\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221027/88f73c30-e2ed-4b07-b94e-8c90c3c3d9fa.svg\"},{\"groupRownum\":\"1\",\"menuCtgryNm\":\"고객센터\",\"menuNm\":\"공지사항\",\"linkUrl\":\"/mct/initAnnList.do\",\"loginEsntlYn\":\"N\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/2aae3a60-abbb-47a2-a511-60fd05091eab.svg\"},{\"grou"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectLctrSrchPopUpNeedInfo.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"lctrTrgCtgryList\":[{\"currentPageNo\":0,\"recordsPerPage\":0,\"srchSortType\":null,\"srchKeyword\":null,\"viewType\":null,\"rdoCtgryTrg\":null,\"rdoCtgry\":null,\"srchBeginDt\":null,\"srchTrmntDt\":null,\"chkTkcrsDywk\":null,\"selBeginTme\":null,\"selTrmntTme\":null,\"chkTmcnt\":null,\"chkAcptSt\":null,\"chkPfmco\":null,\"chkTkcrsAmt\":null,\"chkChildAge\":null,\"notLctrNo\":null,\"arrLctrTrgCtgryCd\":null,\"arrLctrDivnCtgryCd\":null,\"lctrTrgCtgryCd\":\"1\",\"lctrSubTrgCtgryCd\":null,\"lctrTrgCtgryNm\":\"성인\",\"lctrDivnCtgryCd\":null,\"lctrDivnCtgryNm\":null,\"intltImgPath\":\"https://image.classkok.com/Main/20221006/36fb303a-dcc3-4655-8968-fc8613dad6f4.svg\",\"chcImgPath\":\"https://image.classkok.com/Main/20221006/5a32a44a-3dcb-41b0-b065-627938b8e351.svg\",\"lctrTotCnt\":0,\"cstmrId\":null,\"lctrNo\":null,\"storeCd\":null,\"storeNm\":null,\"pfmcoNo\":null,\"pfmcoNm\":null,\"lctrNm\":null,\"selfTkcrsYn\":null,\"selfTkcrsChcCd\":null,\"cmpnnTkcrsYn\":null,\"chldrTkcrsYn\":null,\"chldrTkcrsChcCd\":null,\"tkcrsGnrCd\":null,\"cncptDscrtCntnt\":null,\"lctrTrgCntnt\":null,\"lctrStCd\":null,\"lctrStNm\":null,\"cnsntStCd\":null,\"fdtrYn\":null,\"lctrmCd\":null,\"lctrmNm\":null,\"fnpPrcnt\":null,\"atmtcClcsYn\":null,\"atmtcClcsPrcnt\":null,\"tm1SbsctMnmPrcnt\":null,\"tm1SbsctMxmPrcnt\":null,\"lctrBeginDt\":null,\"lctrTrmntDt\":null,\"lctrBeginHrmnt\":null,\"lctrTrmntHrmnt\":null,\"sunChcYn\":null,\"monChcYn\":null,\"tueChcYn\":null,\"wedChcYn\":null,\"thuChcYn\":null,\"friChcYn\":null,\"satChcYn\":null,\"indcnDywkNm\":null,\"acptBeginDt\":null,\"acptTrmntDt\":null,\"acptFdsTodyYn\":null,\"acptFdsPrdDycnt\":null,\"weekTmcnt\":nu"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectMenuList.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"list\":[{\"groupRownum\":\"1\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"마이클래스\",\"linkUrl\":\"/mml/initTkcrsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/edd69056-2823-4b26-af4b-294f1c79cfc4.svg\"},{\"groupRownum\":\"2\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"자녀회원\",\"linkUrl\":\"/mml/initChldrMshp.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/9a70da99-e266-4139-9583-b56f45e0b905.svg\"},{\"groupRownum\":\"3\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 쿠폰\",\"linkUrl\":\"/cpn/myCpnList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20231019/914cbad9-018a-4110-895f-d2cf62628a24.svg\"},{\"groupRownum\":\"4\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 수강 후기\",\"linkUrl\":\"/mml/initWrdtAvlblRvwList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/00d9c58d-92cb-46c2-b1f0-09a3aad188fa.svg\"},{\"groupRownum\":\"5\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"나의 문의 내역\",\"linkUrl\":\"/mml/initMyAskDtlsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/ce74c05c-d10e-4021-839a-e94e95a7a1a1.svg\"},{\"groupRownum\":\"6\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"대기 신청 내역\",\"linkUrl\":\"/mml/initWtngLctrList.do?\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221027/88f73c30-e2ed-4b07-b94e-8c90c3c3d9fa.svg\"},{\"groupRownum\":\"1\",\"menuCtgryNm\":\"고객센터\",\"menuNm\":\"공지사항\",\"linkUrl\":\"/mct/initAnnList.do\",\"loginEsntlYn\":\"N\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/2aae3a60-abbb-47a2-a511-60fd05091eab.svg\"},{\"grou"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/initMyWishList.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"totCnt\":0,\"storeList\":[],\"myWishList\":[],\"ctgryCdList\":[]}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectStoreEmad.do",
+  "method": "POST",
+  "post": "{\"storeCd\":\"02\"}",
+  "body": "{\"storeEmad\":\"classkok_suwon@shinsegae.com\",\"curStoreCd\":\"02\"}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectLctrSrchPopUpNeedInfo.do",
+  "method": "POST",
+  "post": "",
+  "body": "{\"lctrTrgCtgryList\":[{\"currentPageNo\":0,\"recordsPerPage\":0,\"srchSortType\":null,\"srchKeyword\":null,\"viewType\":null,\"rdoCtgryTrg\":null,\"rdoCtgry\":null,\"srchBeginDt\":null,\"srchTrmntDt\":null,\"chkTkcrsDywk\":null,\"selBeginTme\":null,\"selTrmntTme\":null,\"chkTmcnt\":null,\"chkAcptSt\":null,\"chkPfmco\":null,\"chkTkcrsAmt\":null,\"chkChildAge\":null,\"notLctrNo\":null,\"arrLctrTrgCtgryCd\":null,\"arrLctrDivnCtgryCd\":null,\"lctrTrgCtgryCd\":\"1\",\"lctrSubTrgCtgryCd\":null,\"lctrTrgCtgryNm\":\"성인\",\"lctrDivnCtgryCd\":null,\"lctrDivnCtgryNm\":null,\"intltImgPath\":\"https://image.classkok.com/Main/20221006/36fb303a-dcc3-4655-8968-fc8613dad6f4.svg\",\"chcImgPath\":\"https://image.classkok.com/Main/20221006/5a32a44a-3dcb-41b0-b065-627938b8e351.svg\",\"lctrTotCnt\":0,\"cstmrId\":null,\"lctrNo\":null,\"storeCd\":null,\"storeNm\":null,\"pfmcoNo\":null,\"pfmcoNm\":null,\"lctrNm\":null,\"selfTkcrsYn\":null,\"selfTkcrsChcCd\":null,\"cmpnnTkcrsYn\":null,\"chldrTkcrsYn\":null,\"chldrTkcrsChcCd\":null,\"tkcrsGnrCd\":null,\"cncptDscrtCntnt\":null,\"lctrTrgCntnt\":null,\"lctrStCd\":null,\"lctrStNm\":null,\"cnsntStCd\":null,\"fdtrYn\":null,\"lctrmCd\":null,\"lctrmNm\":null,\"fnpPrcnt\":null,\"atmtcClcsYn\":null,\"atmtcClcsPrcnt\":null,\"tm1SbsctMnmPrcnt\":null,\"tm1SbsctMxmPrcnt\":null,\"lctrBeginDt\":null,\"lctrTrmntDt\":null,\"lctrBeginHrmnt\":null,\"lctrTrmntHrmnt\":null,\"sunChcYn\":null,\"monChcYn\":null,\"tueChcYn\":null,\"wedChcYn\":null,\"thuChcYn\":null,\"friChcYn\":null,\"satChcYn\":null,\"indcnDywkNm\":null,\"acptBeginDt\":null,\"acptTrmntDt\":null,\"acptFdsTodyYn\":null,\"acptFdsPrdDycnt\":null,\"weekTmcnt\":nu"
+ }
+]

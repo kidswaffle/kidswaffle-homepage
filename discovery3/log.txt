@@ -1,0 +1,53 @@
+suwon ERROR locator.click: Timeout 8000ms exceeded.
+Call log:
+  - waiting for locator('button:has-text("클래스검색")').first()
+    - locator resolved to <button type="button" tabindex="-1" id="popLctrSrch" class="btn-tab btn-open-popup" onmousedown="javascript:AM_PL('/cm/popLctrSrch');" onclick="fn_oneLayerOpen("class-search", "popLctrSrch");">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="popMain" tabindex="0" aria-hidden="false" class="main-popup-wrap position-fix flex-center d-flex">…</div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="popMain" tabindex="0" aria-hidden="false" class="main-popup-wrap position-fix flex-center d-flex">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    15 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="popMain" tabindex="0" aria-hidden="false" class="main-popup-wrap position-fix flex-center d-flex">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
+
+unjeong ERROR locator.click: Timeout 8000ms exceeded.
+Call log:
+  - waiting for locator('button:has-text("클래스검색")').first()
+    - locator resolved to <button type="button" tabindex="-1" id="popLctrSrch" class="btn-tab btn-open-popup" onmousedown="javascript:AM_PL('/cm/popLctrSrch');" onclick="fn_oneLayerOpen("class-search", "popLctrSrch");">…</button>
+  - attempting click action
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="popMain" tabindex="0" aria-hidden="false" class="main-popup-wrap position-fix flex-center d-flex">…</div> intercepts pointer events
+    - retrying click action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and stable
+      - element is visible, enabled and stable
+      - scrolling into view if needed
+      - done scrolling
+      - <div id="popMain" tabindex="0" aria-hidden="false" class="main-popup-wrap position-fix flex-center d-flex">…</div> intercepts pointer events
+    - retrying click action
+      - waiting 100ms
+    15 × waiting for element to be visible, enabled and stable
+       - element is visible, enabled and stable
+       - scrolling into view if needed
+       - done scrolling
+       - <div id="popMain" tabindex="0" aria-hidden="false" class="main-popup-wrap position-fix flex-center d-flex">…</div> intercepts pointer events
+     - retrying click action
+       - waiting 500ms
