@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 
-const OUT = 'discovery3';
+const OUT = 'discovery4';
 fs.mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
 const log = [];
@@ -27,7 +27,7 @@ for (const [key, label] of STORES) {
     await page.locator('a', { hasText: label.split('\n')[1] }).first().click({ timeout: 8000 });
     await page.waitForLoadState('networkidle').catch(() => {});
     await page.goto('https://www.classkok.com/', { waitUntil: 'networkidle' });
-    await page.locator('button:has-text("클래스검색")').first().click({ timeout: 8000 });
+    await page.evaluate(() => { document.querySelectorAll('.main-popup-wrap').forEach((e) => e.remove()); document.querySelector('#popLctrSrch').click(); });
     await page.waitForTimeout(1500);
     await snap('search-open');
     const input = page.locator('input#search:visible, input[placeholder*="검색"]:visible').first();
