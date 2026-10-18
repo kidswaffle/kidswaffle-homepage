@@ -8,6 +8,10 @@ import { fetchBlogs } from './naver.mjs';
 import { judgeClasskok, judgeBlogs } from './judge.mjs';
 
 const DRY = process.argv.includes('--dry');
+if (DRY) { // test runs keep their log in the repo so it can be read without GitHub's UI
+  fs.mkdirSync('dryrun', { recursive: true });
+  for (const k of ['log', 'error']) { const o = console[k]; console[k] = (...a) => { fs.appendFileSync('dryrun/log.txt', a.join(' ') + '\n'); o(...a); }; }
+}
 const FILE = 'src/data/reviews-auto.json';
 const CAPS = { blog: 5, suwon: 3, unjeong: 3 };
 const GROUPS = { blog: (r) => r.source === 'blog', suwon: (r) => r.store === 'suwon', unjeong: (r) => r.store === 'unjeong' };
