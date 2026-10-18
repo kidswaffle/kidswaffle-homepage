@@ -55,15 +55,15 @@ for (const [g, test] of Object.entries(GROUPS)) {
   added.push(...keep.filter((r) => !have.has(r.id)));
   removed.push(...old.filter((r) => !keep.includes(r)));
 }
-console.log(`judged by ${mode.name}: ${verdict.size} checked, ${[...verdict.values()].filter((v) => v.include).length} fit, new: ${added.length}, dropped: ${removed.length}`);
+console.log(`checked by rules: ${verdict.size} checked, ${[...verdict.values()].filter((v) => v.include).length} fit, new: ${added.length}, dropped: ${removed.length}`);
 if (added.length === 0) { console.log('NOTHING_NEW'); process.exit(0); }
-const how = { gemini: 'Gemini(무료 AI)', claude: 'Claude(AI)', rules: '규칙 판별(AI 없음) — 꼼꼼히 확인해 주세요' }[mode.name];
+const how = 'AI 없이 규칙으로 1차 거름 — 아래 내용을 직접 확인해 주세요';
 
 const month = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' }).slice(0, 7);
 fs.writeFileSync(FILE, JSON.stringify({ updated: month, items: next }, null, 2) + '\n');
 
-const line = (r, i) => `### ${i + 1}. ${r.source === 'blog' ? '네이버 블로그' : r.place} · ${r.date}\n**${r.title}**${r.author ? ` — ${r.author}` : ''}\n\n${r.body.split('\n').map((l) => '> ' + l).join('\n')}\n${r.url ? `\n원문: ${r.url}\n` : ''}\n_판단: ${r.reason || '-'} (점수 ${r.score}/10)_\n`;
-const body = `## 홈페이지 후기 ${month} 업데이트 승인 요청\n\n새 후기 **${added.length}건**이 추가되고, 오래된 **${removed.length}건**이 빠집니다. (판별 방식: ${how})\n\n- **게시하려면:** 아래쪽 \`Merge pull request\` → \`Confirm merge\` 를 누르세요. 몇 분 뒤 홈페이지에 반영됩니다.\n- **게시하지 않으려면:** \`Close pull request\` 를 누르세요. 그대로 유지됩니다.\n- 일부만 올리고 싶으면 이 알림에 답장하거나 Claude에게 "N번 빼고 게시"라고 말해 주세요.\n\n---\n\n## 추가되는 후기\n\n${added.map(line).join('\n')}\n${removed.length ? `---\n\n## 빠지는 후기\n${removed.map((r) => `- ${r.date} ${r.place} · ${r.title}`).join('\n')}\n` : ''}`;
+const line = (r, i) => `### ${i + 1}. ${r.source === 'blog' ? '네이버 블로그' : r.place} · ${r.date}\n**${r.title}**${r.author ? ` — ${r.author}` : ''}\n\n${r.body.split('\n').map((l) => '> ' + l).join('\n')}\n${r.url ? `\n원문: ${r.url}\n` : ''}\n_1차 확인: ${r.reason || '-'}_\n`;
+const body = `## 홈페이지 후기 ${month} 업데이트 승인 요청\n\n새 후기 **${added.length}건**이 추가되고, 오래된 **${removed.length}건**이 빠집니다. (${how})\n\n- **게시하려면:** 아래쪽 \`Merge pull request\` → \`Confirm merge\` 를 누르세요. 몇 분 뒤 홈페이지에 반영됩니다.\n- **게시하지 않으려면:** \`Close pull request\` 를 누르세요. 그대로 유지됩니다.\n- 일부만 올리고 싶으면 GitHub의 \`Files changed\` 탭에서 \`reviews-auto.json\`의 빼고 싶은 항목을 지우거나(연필 아이콘으로 수정), Claude에게 "N번 빼고 게시"라고 말해 주세요.\n\n---\n\n## 추가되는 후기\n\n${added.map(line).join('\n')}\n${removed.length ? `---\n\n## 빠지는 후기\n${removed.map((r) => `- ${r.date} ${r.place} · ${r.title}`).join('\n')}\n` : ''}`;
 fs.writeFileSync('pr-body.md', body);
 if (DRY) fs.writeFileSync('dryrun/preview.md', body);
 fs.writeFileSync('pr-title.txt', `후기 업데이트 ${month}: 새 후기 ${added.length}건 승인 요청`);

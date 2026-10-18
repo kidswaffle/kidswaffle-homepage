@@ -4,7 +4,7 @@ on:
     - cron: '0 1 15 * *' # the 15th, 10:00 Korea time (after the 2nd Monday of the month)
   workflow_dispatch:
   push:
-    branches: [auto-reviews] # test runs: collect only, no judging unless the key is set, nothing published
+    branches: [auto-reviews] # test runs: collect only, nothing published
 permissions:
   contents: write
   pull-requests: write
@@ -26,8 +26,6 @@ jobs:
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       - name: Save test results (test runs only)
         if: github.event_name == 'push'
         run: |
