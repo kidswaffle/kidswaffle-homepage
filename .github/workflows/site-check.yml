@@ -1,0 +1,24 @@
+name: site-check
+on:
+  push:
+    branches: [site-check]
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe
+        run: |
+          mkdir -p sitecheck
+          {
+            for u in https://www.kidswaffle.com/ https://kidswaffle.com/ https://www.kidswaffle.com/robots.txt https://kidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app/ https://kidswaffle-homepage.vercel.app/ https://kidswaffle-homepage-kidswaffles-projects.vercel.app/; do
+              echo "=== $u"; curl -sS -m 20 -I -L --max-redirs 5 "$u" 2>&1 | grep -iE "^HTTP|^location|^server|x-vercel|^curl" ; echo
+            done
+            for d in kidswaffle.com www.kidswaffle.com; do echo "=== DNS $d"; dig +short A $d; dig +short CNAME $d; dig +short NS ${d#www.}; done
+            echo "=== body"; curl -sS -m 20 https://www.kidswaffle.com/ | head -c 600
+          } > sitecheck/result.txt 2>&1
+      - run: |
+          git config user.name bot; git config user.email bot@users.noreply.github.com
+          git add -f sitecheck; git commit -m "site check" ; git push
