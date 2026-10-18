@@ -25,8 +25,11 @@ async function storeReviews(browser, store) {
     await input.press('Enter');
     await page.waitForLoadState('networkidle').catch(() => {});
     const lctrNo = await page.$eval('#ulViewThumbnail a[onclick*=fn_moveLctrDetail]', (a) => a.getAttribute('onclick').match(/L\d+/)[0]);
-    await page.evaluate((no) => fn_moveLctrDetail(no), lctrNo); // opens the class page (sets up the session)
-    await page.waitForLoadState('networkidle').catch(() => {});
+    // opens the class page (the site submits a form, so the page navigates)
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }),
+      page.evaluate((no) => fn_moveLctrDetail(no), lctrNo).catch(() => {})
+    ]);
     const out = [];
     for (let p = 1; p <= PAGES; p++) {
       const res = await page.evaluate(async ({ no, p }) => {
