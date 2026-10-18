@@ -1,0 +1,80 @@
+=== https://www.kidswaffle.com/
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: sfo1::pjkzc-1792319732804-c3e08827d10d
+
+=== https://kidswaffle.com/
+HTTP/2 308 
+location: https://www.kidswaffle.com/
+server: Vercel
+x-vercel-id: sfo1::gfrlx-1792319732967-84173d5b264a
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: sfo1::m64pv-1792319733065-cf8e7f591a62
+
+=== https://www.kidswaffle.com/robots.txt
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: MISS
+x-vercel-id: sfo1::m72pf-1792319733229-32fa851dfe33
+
+=== https://kidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app/
+HTTP/2 302 
+location: https://vercel.com/sso-api?url=https%3A%2F%2Fkidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app%2F&nonce=d4e587a5d5ab8c7422976111d93c35b4400d2be7b5984c384e1ed42b37ab20c3
+server: Vercel
+x-vercel-id: sfo1::z6jpr-1792319733429-392462adbc09
+HTTP/2 307 
+location: /login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fkidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app%252F%26nonce%3Dd4e587a5d5ab8c7422976111d93c35b4400d2be7b5984c384e1ed42b37ab20c3
+server: Vercel
+x-vercel-cache: MISS
+x-vercel-id: sfo1::sfo1::ghn7b-1792319733505-690c2e6cb8f6
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: sfo1::nmzk7-1792319733745-9decafc50f0b
+
+=== https://kidswaffle-homepage.vercel.app/
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: sfo1::xbqmc-1792319733870-e9717c6b8d2f
+
+=== https://kidswaffle-homepage-kidswaffles-projects.vercel.app/
+HTTP/2 302 
+location: https://vercel.com/sso-api?url=https%3A%2F%2Fkidswaffle-homepage-kidswaffles-projects.vercel.app%2F&nonce=00c6c60bc2f1bc87c0755a0d7fb5d555fd3823bc82fbc36f239ecdf0557cfa1b
+server: Vercel
+x-vercel-id: sfo1::fzrfj-1792319733972-3059e8e6f678
+HTTP/2 307 
+location: /login?next=%2Fsso-api%3Furl%3Dhttps%253A%252F%252Fkidswaffle-homepage-kidswaffles-projects.vercel.app%252F%26nonce%3D00c6c60bc2f1bc87c0755a0d7fb5d555fd3823bc82fbc36f239ecdf0557cfa1b
+server: Vercel
+x-vercel-cache: MISS
+x-vercel-id: sfo1::sfo1::vghz5-1792319734063-d43ecf523714
+HTTP/2 200 
+server: Vercel
+x-vercel-cache: HIT
+x-vercel-id: sfo1::w2j28-1792319734307-32accc679159
+
+=== DNS kidswaffle.com
+216.198.79.65
+64.29.17.65
+ivan.ns.cloudflare.com.
+bristol.ns.cloudflare.com.
+=== DNS www.kidswaffle.com
+2a5109233ffdff6f.vercel-dns-017.com.
+64.29.17.1
+216.198.79.1
+2a5109233ffdff6f.vercel-dns-017.com.
+ivan.ns.cloudflare.com.
+bristol.ns.cloudflare.com.
+=== body
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#FFF7EC">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<title>키즈와플 오감팡팡 | 부모와 함께하는 영유아 오감놀이 (5~24개월)</title>
+<meta name="description" content="키즈와플 오감팡팡은 문화센터에서 부모와 5~24개월 영유아가 함께 듣는 오감놀이 수업입니다. 한 클래스 최대 10명, 매주 바뀌는 테마와 포토존 사진으로 아이의 첫 놀이를 �curl: (23) Failure writing output to destination
