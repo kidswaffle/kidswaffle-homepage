@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 
-const OUT = 'discovery2';
+const OUT = 'discovery3';
 fs.mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
 const log = [];
@@ -26,9 +26,12 @@ for (const [key, label] of STORES) {
     await page.goto('https://www.classkok.com', { waitUntil: 'networkidle', timeout: 45000 });
     await page.locator('a', { hasText: label.split('\n')[1] }).first().click({ timeout: 8000 });
     await page.waitForLoadState('networkidle').catch(() => {});
-    await page.goto('https://www.classkok.com/mlt/initLctrSrch.do?lctrTrgCtgryCd=1', { waitUntil: 'networkidle' });
-    const input = page.locator('input[placeholder*="검색"]').first();
-    await input.fill('키즈와플'); await input.press('Enter');
+    await page.goto('https://www.classkok.com/', { waitUntil: 'networkidle' });
+    await page.locator('button:has-text("클래스검색")').first().click({ timeout: 8000 });
+    await page.waitForTimeout(1500);
+    await snap('search-open');
+    const input = page.locator('input#search:visible, input[placeholder*="검색"]:visible').first();
+    await input.fill('키즈와플', { timeout: 8000 }); await input.press('Enter');
     await page.waitForLoadState('networkidle').catch(() => {});
     await snap('list');
     const items = await page.$$eval('#ulViewThumbnail li', (lis) => lis.map((li) => {
