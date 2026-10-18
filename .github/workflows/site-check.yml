@@ -17,7 +17,7 @@ jobs:
               echo "=== $u"; curl -sS -m 20 -I -L --max-redirs 5 "$u" 2>&1 | grep -iE "^HTTP|^location|^server|x-vercel|^curl" ; echo
             done
             for d in kidswaffle.com www.kidswaffle.com; do echo "=== DNS $d"; dig +short A $d; dig +short CNAME $d; dig +short NS ${d#www.}; done
-            echo "=== body"; curl -sS -m 20 https://www.kidswaffle.com/ | head -c 600
+            for path in program about notfound-test index.html api/videos sitemap.xml; do echo "=== PATH /$path"; curl -sS -m 20 -o /tmp/b -w "%{http_code} %{content_type}\n" "https://www.kidswaffle.com/$path"; head -c 200 /tmp/b | tr '\n' ' '; echo; done
           } > sitecheck/result.txt 2>&1
       - run: |
           git config user.name bot; git config user.email bot@users.noreply.github.com
