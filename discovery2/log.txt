@@ -1,0 +1,37 @@
+suwon ERROR locator.fill: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('input[placeholder*="검색"]').first()
+    - locator resolved to <input type="text" id="search" maxlength="50" enterkeyhint="search" placeholder="검색어를 입력해주세요."/>
+    - fill("키즈와플")
+  - attempting fill action
+    2 × waiting for element to be visible, enabled and editable
+      - element is not visible
+    - retrying fill action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and editable
+      - element is not visible
+    - retrying fill action
+      - waiting 100ms
+    60 × waiting for element to be visible, enabled and editable
+       - element is not visible
+     - retrying fill action
+       - waiting 500ms
+
+unjeong ERROR locator.fill: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('input[placeholder*="검색"]').first()
+    - locator resolved to <input type="text" id="search" maxlength="50" enterkeyhint="search" placeholder="검색어를 입력해주세요."/>
+    - fill("키즈와플")
+  - attempting fill action
+    2 × waiting for element to be visible, enabled and editable
+      - element is not visible
+    - retrying fill action
+    - waiting 20ms
+    2 × waiting for element to be visible, enabled and editable
+      - element is not visible
+    - retrying fill action
+      - waiting 100ms
+    60 × waiting for element to be visible, enabled and editable
+       - element is not visible
+     - retrying fill action
+       - waiting 500ms
