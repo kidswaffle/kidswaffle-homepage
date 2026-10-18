@@ -1,0 +1,6 @@
+suwon: 8 items, store 선택된 지점명
+수원점
+suwon review-ish labels: ["나의 수강 후기","후기\n188","클래스 후기 상세 보기"]
+unjeong: 6 items, store 선택된 지점명
+운정점
+unjeong review-ish labels: ["후기\n88","클래스 후기 상세 보기"]
