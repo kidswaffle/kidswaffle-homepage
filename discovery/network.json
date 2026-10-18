@@ -1,0 +1,56 @@
+[
+ {
+  "url": "https://www.classkok.com/mcm/selectMenuList.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"list\":[{\"groupRownum\":\"1\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"마이클래스\",\"linkUrl\":\"/mml/initTkcrsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/edd69056-2823-4b26-af4b-294f1c79cfc4.svg\"},{\"groupRownum\":\"2\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"자녀회원\",\"linkUrl\":\"/mml/initChldrMshp.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/9a70da99-e266-4"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectStoreEmad.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"storeEmad\":\"classkok_suwon@shinsegae.com\",\"curStoreCd\":\"02\"}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/initMyWishList.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"totCnt\":0,\"storeList\":[],\"myWishList\":[],\"ctgryCdList\":[]}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectMenuList.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"list\":[{\"groupRownum\":\"1\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"마이클래스\",\"linkUrl\":\"/mml/initTkcrsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/edd69056-2823-4b26-af4b-294f1c79cfc4.svg\"},{\"groupRownum\":\"2\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"자녀회원\",\"linkUrl\":\"/mml/initChldrMshp.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/9a70da99-e266-4"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectLctrSrchPopUpNeedInfo.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"lctrTrgCtgryList\":[{\"currentPageNo\":0,\"recordsPerPage\":0,\"srchSortType\":null,\"srchKeyword\":null,\"viewType\":null,\"rdoCtgryTrg\":null,\"rdoCtgry\":null,\"srchBeginDt\":null,\"srchTrmntDt\":null,\"chkTkcrsDywk\":null,\"selBeginTme\":null,\"selTrmntTme\":null,\"chkTmcnt\":null,\"chkAcptSt\":null,\"chkPfmco\":null,\"chkTkcrsAmt\":null,\"chkChildAge\":null,\"notLctrNo\":null,\"arrLctrTrgCtgryCd\":null,\"arrLctrDivnCtgryCd\":null,"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectStoreEmad.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"storeEmad\":\"classkok_suwon@shinsegae.com\",\"curStoreCd\":\"02\"}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/initMyWishList.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"totCnt\":0,\"storeList\":[],\"myWishList\":[],\"ctgryCdList\":[]}"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectMenuList.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"list\":[{\"groupRownum\":\"1\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"마이클래스\",\"linkUrl\":\"/mml/initTkcrsList.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/edd69056-2823-4b26-af4b-294f1c79cfc4.svg\"},{\"groupRownum\":\"2\",\"menuCtgryNm\":\"마이라운지\",\"menuNm\":\"자녀회원\",\"linkUrl\":\"/mml/initChldrMshp.do\",\"loginEsntlYn\":\"Y\",\"fileRelPath\":\"https://image.classkok.com/Main/20221005/9a70da99-e266-4"
+ },
+ {
+  "url": "https://www.classkok.com/mcm/selectLctrSrchPopUpNeedInfo.do",
+  "status": 200,
+  "method": "POST",
+  "body": "{\"lctrTrgCtgryList\":[{\"currentPageNo\":0,\"recordsPerPage\":0,\"srchSortType\":null,\"srchKeyword\":null,\"viewType\":null,\"rdoCtgryTrg\":null,\"rdoCtgry\":null,\"srchBeginDt\":null,\"srchTrmntDt\":null,\"chkTkcrsDywk\":null,\"selBeginTme\":null,\"selTrmntTme\":null,\"chkTmcnt\":null,\"chkAcptSt\":null,\"chkPfmco\":null,\"chkTkcrsAmt\":null,\"chkChildAge\":null,\"notLctrNo\":null,\"arrLctrTrgCtgryCd\":null,\"arrLctrDivnCtgryCd\":null,"
+ }
+]

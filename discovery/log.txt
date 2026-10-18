@@ -1,0 +1,3 @@
+01-home: https://www.classkok.com/selectStore.do
+02-region-open: https://www.classkok.com/
+03-search: https://www.classkok.com/mlt/initLctrWordSrch.do
