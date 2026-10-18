@@ -1,0 +1,54 @@
+name: monthly-reviews
+on:
+  schedule:
+    - cron: '0 1 15 * *' # the 15th, 10:00 Korea time (after the 2nd Monday of the month)
+  workflow_dispatch:
+  push:
+    branches: [auto-reviews] # test runs: collect only, no judging unless the key is set, nothing published
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.event_name == 'push' && github.ref_name || 'main' }}" }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-save --no-package-lock playwright@1.49.1 nodemailer@6.9.16
+      - run: npx playwright install --with-deps chromium
+      - name: Collect and screen reviews
+        run: node scripts/reviews/collect.mjs ${{ github.event_name == 'push' && '--dry' || '' }}
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Save test results (test runs only)
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "reviews-bot"; git config user.email "bot@users.noreply.github.com"
+          git add -f dryrun; git commit -m "Dry-run results" || true; git push
+      - name: Open the approval pull request
+        if: github.event_name != 'push'
+        run: |
+          if [ ! -f pr-title.txt ]; then echo "Nothing new this month."; exit 0; fi
+          git config user.name "reviews-bot"; git config user.email "bot@users.noreply.github.com"
+          BR="reviews/$(date -u +%Y-%m-%d-%H%M)"
+          git checkout -b "$BR"
+          git add src/data/reviews-auto.json
+          git commit -m "$(cat pr-title.txt)"
+          git push -u origin "$BR"
+          URL=$(gh pr create --base main --head "$BR" --title "$(cat pr-title.txt)" --body-file pr-body.md)
+          echo "PR_URL=$URL" >> "$GITHUB_ENV"
+          echo "$URL"
+      - name: Email the approval request
+        if: github.event_name != 'push' && env.PR_URL != ''
+        run: node scripts/reviews/notify.mjs
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          NOTIFY_TO: ${{ secrets.NOTIFY_TO }}

@@ -14,6 +14,7 @@ import hwang3 from '../assets/reviews/hwang-3.webp';
 import kang1 from '../assets/reviews/kang-1.webp';
 import kang2 from '../assets/reviews/kang-2.webp';
 import ji1 from '../assets/reviews/ji-1.webp';
+import AUTO from '../data/reviews-auto.json';
 
 // Real reviews from parents (names masked as on the original posts). Newest first.
 const REVIEWS = [
@@ -36,6 +37,14 @@ const REVIEWS = [
   { title: '키즈와플 오감팡팡 타임스퀘어점 수업후기', author: '맘카페 후기', place: '신세계백화점 타임스퀘어점', date: '2025.02', accent: 'var(--kw-coral)', photos: [],
     body: '여름학기에 수강하고 다른 수업도 경험하고 싶어서 다른 수업을 들었다가 다시 돌아온 키즈와플! 처음엔 앉아만 있던 아기였는데 어느덧 기동성이 좋아져서 선생님이 교구를 꺼내면 다가가기도 하고, 여름보다 좀 더 적극적으로 수업에 참여할 수 있었어요. 악기 교구들과 촉감놀이, 매주 테마에 맞는 교구들로 40분 동안 신나게 놀 수 있어요! 거기에 퀄 좋은 코스튬으로 너무 귀여운 모습도 볼 수 있고, 사진 선생님께서 아기들의 이쁜 모습을 찍어 종강 때 인화도 해주는 사진 선물까지! 꽉 찬 겨울학기였습니다! 이제 어린이집 가야 해서 문센은 끝이지만 좋은 기억으로 가지고 갑니다.' }
 ];
+
+// Every month a pull request refreshes src/data/reviews-auto.json (Naver blog summaries and 클래스콕 reviews);
+// once approved they are shown with the hand-picked reviews above, newest first.
+const ACCENTS = ['var(--kw-coral)', 'var(--kw-yellow)', 'var(--kw-green)', 'var(--kw-sky)'];
+const ALL_REVIEWS = [
+  ...REVIEWS,
+  ...AUTO.items.map((r, i) => ({ ...r, accent: ACCENTS[i % ACCENTS.length], photos: [] }))
+].sort((a, b) => b.date.localeCompare(a.date));
 
 function ReviewCard({ r }) {
   const [open, setOpen] = React.useState(false);
@@ -64,8 +73,13 @@ function ReviewCard({ r }) {
         </div>
       )}
       <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <div style={{ font: 'var(--type-h5)', color: 'var(--text-strong)' }}>{r.author}{r.author.includes('후기') ? '' : ' 님'}</div>
+        <div style={{ font: 'var(--type-h5)', color: 'var(--text-strong)' }}>{r.author}{r.author.includes('후기') || r.url ? '' : ' 님'}</div>
         <div style={{ font: 'var(--type-caption)', color: 'var(--text-muted)' }}>{r.place} · {r.date}</div>
+        {r.url && (
+          <a href={r.url} target="_blank" rel="noopener noreferrer" style={{ marginTop: 6, alignSelf: 'flex-start', font: 'var(--type-button-sm)', color: 'var(--text-brand)' }}>
+            블로그 원문 보기 ↗
+          </a>
+        )}
       </div>
     </article>
   );
@@ -81,7 +95,7 @@ function ReviewCarousel() {
   const rail = React.useRef(null);
   const hold = React.useRef({ hover: false, until: 0, visible: false });
   const [page, setPage] = React.useState(0);
-  const [pages, setPages] = React.useState(REVIEWS.length);
+  const [pages, setPages] = React.useState(ALL_REVIEWS.length);
 
   const step = () => {
     const el = rail.current;
@@ -140,7 +154,7 @@ function ReviewCarousel() {
       onFocus={() => { hold.current.hover = true; }} onBlur={() => { hold.current.hover = false; }}
       onTouchStart={userMoved} onWheel={userMoved}>
       <div ref={rail} className="kw-rv-rail">
-        {REVIEWS.map((r) => <ReviewCard key={r.title + r.date} r={r} />)}
+        {ALL_REVIEWS.map((r) => <ReviewCard key={r.id || r.title + r.date} r={r} />)}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 8 }}>
         <button type="button" aria-label="이전 후기" onClick={() => { userMoved(); prev(); }} style={arrow}><Icon name="arrow-left" size={18} /></button>
