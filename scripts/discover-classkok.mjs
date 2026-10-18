@@ -1,49 +1,56 @@
-// One-off discovery run: records what classkok.com serves to a browser so the review collector can be written against it.
+// Discovery run 2: list the 키즈와플 classes of each store, open a detail page and look for its reviews.
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 
-const OUT = 'discovery';
+const OUT = 'discovery2';
 fs.mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
-const ctx = await browser.newContext({ locale: 'ko-KR', viewport: { width: 1280, height: 900 } });
-const page = await ctx.newPage();
-const net = [];
-page.on('response', async (r) => {
-  const ct = r.headers()['content-type'] || '';
-  if (!/json/.test(ct)) return;
-  let body = '';
-  try { body = (await r.text()).slice(0, 400); } catch { /* streamed */ }
-  net.push({ url: r.url(), status: r.status(), method: r.request().method(), body });
-});
-
 const log = [];
-const snap = async (name) => {
-  await page.waitForTimeout(1500);
-  fs.writeFileSync(`${OUT}/${name}.html`, await page.content());
-  await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: false });
-  const links = await page.$$eval('a,button,input,select', (els) => els.map((e) => ({
-    tag: e.tagName, text: (e.innerText || e.value || '').trim().slice(0, 60), href: e.getAttribute('href'), cls: (e.className || '').toString().slice(0, 60), ph: e.getAttribute('placeholder')
-  })).filter((x) => x.text || x.href || x.ph));
-  fs.writeFileSync(`${OUT}/${name}-elements.json`, JSON.stringify(links, null, 1));
-  log.push(`${name}: ${page.url()}`);
-};
+const STORES = [['suwon', '스타필드\n수원'], ['unjeong', '스타필드 빌리지\n운정']];
 
-try {
-  await page.goto('https://www.classkok.com', { waitUntil: 'networkidle', timeout: 45000 });
-  await snap('01-home');
-  // try the region switcher (top right) and the search box
-  const region = page.getByText(/지역|서울|경기|수원|전국/).first();
-  if (await region.count()) { await region.click({ timeout: 5000 }).catch(() => {}); await snap('02-region-open'); }
-  const search = page.locator('input[type=search], input[placeholder*="검색"], input[type=text]').first();
-  if (await search.count()) {
-    await search.fill('키즈와플', { timeout: 5000 }).catch(() => {});
-    await search.press('Enter').catch(() => {});
+for (const [key, label] of STORES) {
+  const ctx = await browser.newContext({ locale: 'ko-KR', viewport: { width: 430, height: 932 } });
+  const page = await ctx.newPage();
+  const net = [];
+  page.on('response', async (r) => {
+    if (!/json/.test(r.headers()['content-type'] || '')) return;
+    let body = ''; try { body = (await r.text()).slice(0, 1500); } catch { /* streamed */ }
+    net.push({ url: r.url(), method: r.request().method(), post: (r.request().postData() || '').slice(0, 300), body });
+  });
+  const snap = async (name, full = false) => {
+    await page.waitForTimeout(1500);
+    fs.writeFileSync(`${OUT}/${key}-${name}.html`, await page.content());
+    await page.screenshot({ path: `${OUT}/${key}-${name}.png`, fullPage: full });
+  };
+  try {
+    await page.goto('https://www.classkok.com', { waitUntil: 'networkidle', timeout: 45000 });
+    await page.locator('a', { hasText: label.split('\n')[1] }).first().click({ timeout: 8000 });
     await page.waitForLoadState('networkidle').catch(() => {});
-    await snap('03-search');
-  }
-} catch (e) {
-  log.push('ERROR ' + e.message);
+    await page.goto('https://www.classkok.com/mlt/initLctrSrch.do?lctrTrgCtgryCd=1', { waitUntil: 'networkidle' });
+    const input = page.locator('input[placeholder*="검색"]').first();
+    await input.fill('키즈와플'); await input.press('Enter');
+    await page.waitForLoadState('networkidle').catch(() => {});
+    await snap('list');
+    const items = await page.$$eval('#ulViewThumbnail li', (lis) => lis.map((li) => {
+      const a = li.querySelector('a[onclick*=fn_moveLctrDetail]');
+      const m = a && a.getAttribute('onclick').match(/L\d+/);
+      return { no: m && m[0], title: (li.querySelector('img') || {}).alt, text: li.innerText.replace(/\s+/g, ' ').slice(0, 160) };
+    }));
+    fs.writeFileSync(`${OUT}/${key}-items.json`, JSON.stringify(items, null, 1));
+    log.push(`${key}: ${items.length} items, store ${await page.locator('button:has-text("점")').first().innerText().catch(() => '?')}`);
+    // open the first detail page
+    if (items[0] && items[0].no) {
+      await page.evaluate((no) => fn_moveLctrDetail(no), items[0].no);
+      await page.waitForLoadState('networkidle').catch(() => {});
+      await snap('detail', true);
+      const tabs = await page.$$eval('a,button,li', (els) => els.map((e) => (e.innerText || '').trim().slice(0, 40)).filter((t) => /후기|리뷰/.test(t)));
+      log.push(`${key} review-ish labels: ${JSON.stringify([...new Set(tabs)].slice(0, 10))}`);
+      const tab = page.getByText(/수강후기|후기|리뷰/).first();
+      if (await tab.count()) { await tab.click({ timeout: 5000 }).catch(() => {}); await snap('detail-reviews', true); }
+    }
+  } catch (e) { log.push(`${key} ERROR ${e.message}`); }
+  fs.writeFileSync(`${OUT}/${key}-network.json`, JSON.stringify(net, null, 1));
+  await ctx.close();
 }
-fs.writeFileSync(`${OUT}/network.json`, JSON.stringify(net, null, 1));
 fs.writeFileSync(`${OUT}/log.txt`, log.join('\n'));
 await browser.close();
