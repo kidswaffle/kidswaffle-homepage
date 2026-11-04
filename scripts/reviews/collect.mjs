@@ -13,6 +13,7 @@ if (DRY) { // test runs keep their log in the repo so it can be read without Git
   for (const k of ['log', 'error']) { const o = console[k]; console[k] = (...a) => { fs.appendFileSync('dryrun/log.txt', a.join(' ') + '\n'); o(...a); }; }
 }
 const FILE = 'src/data/reviews-auto.json';
+const HOLD_DAYS = 3; // keep in step with .github/workflows/reviews-publish.yml
 const CAPS = { blog: 5, suwon: 3, unjeong: 3 };
 const GROUPS = { blog: (r) => r.source === 'blog', suwon: (r) => r.store === 'suwon', unjeong: (r) => r.store === 'unjeong' };
 
@@ -63,7 +64,7 @@ const month = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' })
 fs.writeFileSync(FILE, JSON.stringify({ updated: month, items: next }, null, 2) + '\n');
 
 const line = (r, i) => `### ${i + 1}. ${r.source === 'blog' ? '네이버 블로그' : r.place} · ${r.date}\n**${r.title}**${r.author ? ` — ${r.author}` : ''}\n\n${r.body.split('\n').map((l) => '> ' + l).join('\n')}\n${r.url ? `\n원문: ${r.url}\n` : ''}\n_1차 확인: ${r.reason || '-'}_\n`;
-const body = `## 홈페이지 후기 ${month} 업데이트 승인 요청\n\n새 후기 **${added.length}건**이 추가되고, 오래된 **${removed.length}건**이 빠집니다. (${how})\n\n- **게시하려면:** 아래쪽 \`Merge pull request\` → \`Confirm merge\` 를 누르세요. 몇 분 뒤 홈페이지에 반영됩니다.\n- **게시하지 않으려면:** \`Close pull request\` 를 누르세요. 그대로 유지됩니다.\n- 일부만 올리고 싶으면 GitHub의 \`Files changed\` 탭에서 \`reviews-auto.json\`의 빼고 싶은 항목을 지우거나(연필 아이콘으로 수정), Claude에게 "N번 빼고 게시"라고 말해 주세요.\n\n---\n\n## 추가되는 후기\n\n${added.map(line).join('\n')}\n${removed.length ? `---\n\n## 빠지는 후기\n${removed.map((r) => `- ${r.date} ${r.place} · ${r.title}`).join('\n')}\n` : ''}`;
+const body = `## 홈페이지 후기 ${month} 업데이트 승인 요청\n\n새 후기 **${added.length}건**이 추가되고, 오래된 **${removed.length}건**이 빠집니다. (${how})\n\n- **아무것도 안 하셔도 됩니다.** ${HOLD_DAYS}일 뒤에 자동으로 게시됩니다.\n- **게시하지 않으려면:** ${HOLD_DAYS}일 안에 \`Close pull request\` 를 누르세요. 그대로 유지됩니다.\n- **바로 게시하려면:** \`Merge pull request\` → \`Confirm merge\` 를 누르세요.\n- 일부만 올리고 싶으면 \`Files changed\` 탭에서 \`reviews-auto.json\`의 빼고 싶은 항목을 지우고(연필 아이콘) 저장하세요. Claude에게 \"N번 빼고 게시\"라고 말해도 됩니다.\n\n---\n\n## 추가되는 후기\n\n${added.map(line).join('\n')}\n${removed.length ? `---\n\n## 빠지는 후기\n${removed.map((r) => `- ${r.date} ${r.place} · ${r.title}`).join('\n')}\n` : ''}`;
 fs.writeFileSync('pr-body.md', body);
 if (DRY) fs.writeFileSync('dryrun/preview.md', body);
 fs.writeFileSync('pr-title.txt', `후기 업데이트 ${month}: 새 후기 ${added.length}건 승인 요청`);
