@@ -9,16 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Probe
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-save --no-package-lock playwright@1.49.1
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/rawdump.mjs
+      - name: Can images be downloaded without a session?
         run: |
-          mkdir -p sitecheck
-          {
-            for u in https://www.kidswaffle.com/ https://kidswaffle.com/ https://www.kidswaffle.com/robots.txt https://kidswaffle-homepage-726her3yw-kidswaffles-projects.vercel.app/ https://kidswaffle-homepage.vercel.app/ https://kidswaffle-homepage-kidswaffles-projects.vercel.app/; do
-              echo "=== $u"; curl -sS -m 20 -I -L --max-redirs 5 "$u" 2>&1 | grep -iE "^HTTP|^location|^server|x-vercel|^curl" ; echo
-            done
-            for d in kidswaffle.com www.kidswaffle.com; do echo "=== DNS $d"; dig +short A $d; dig +short CNAME $d; dig +short NS ${d#www.}; done
-            for path in program about notfound-test index.html api/videos sitemap.xml; do echo "=== PATH /$path"; curl -sS -m 20 -o /tmp/b -w "%{http_code} %{content_type}\n" "https://www.kidswaffle.com/$path"; head -c 200 /tmp/b | tr '\n' ' '; echo; done
-          } > sitecheck/result.txt 2>&1
+          U=$(node -e "const o=require('./rawdump/out.json');const s=o.suwon&&o.suwon.sample;console.log(s?JSON.stringify(s):'')")
+          echo "$U" > rawdump/sample.txt
       - run: |
           git config user.name bot; git config user.email bot@users.noreply.github.com
-          git add -f sitecheck; git commit -m "site check" ; git push
+          git add -f rawdump; git commit -m "rawdump"; git push
