@@ -18,9 +18,16 @@ jobs:
         with: { ref: main }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm install --no-save --no-package-lock playwright@1.49.1 nodemailer@6.9.16
+      - run: npm install --no-save --no-package-lock playwright@1.49.1 nodemailer@6.9.16 sharp@0.33.5
       - run: npx playwright install --with-deps chromium
+      - name: Skip if an earlier request is still waiting
+        id: waiting
+        run: |
+          N=$(gh pr list --state open --json headRefName --jq '[.[] | select(.headRefName | startswith("reviews/"))] | length')
+          echo "waiting=$N" >> "$GITHUB_OUTPUT"
+          echo "Open review requests: $N"
       - name: Collect and screen reviews
+        if: steps.waiting.outputs.waiting == '0'
         run: node scripts/reviews/collect.mjs
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
@@ -28,15 +35,17 @@ jobs:
       - name: Open the approval pull request (test)
         run: |
           mkdir -p testlog
-          node -e "console.log(require('fs').existsSync('pr-title.txt') ? 'has-candidates' : 'nothing-new')" > testlog/state.txt
-          if [ ! -f pr-title.txt ]; then exit 0; fi
+          if [ ! -f pr-title.txt ]; then echo nothing-new > testlog/state.txt; exit 0; fi
+          echo has-candidates > testlog/state.txt
           git config user.name "reviews-bot"; git config user.email "bot@users.noreply.github.com"
           BR="reviews/$(date -u +%Y-%m-%d-%H%M)"
           git checkout -q -b "$BR"
-          git add src/data/reviews-auto.json
+          sed -i "s#{{REPO}}#${{ github.repository }}#g; s#{{BRANCH}}#$BR#g" pr-body.md
+          git add src/data/reviews-auto.json public/reviews/auto
           git commit -q -m "$(cat pr-title.txt)"
           git push -u origin "$BR" > testlog/push.txt 2>&1 || true
           gh pr create --base main --head "$BR" --title "$(cat pr-title.txt)" --body-file pr-body.md > testlog/pr.txt 2>&1 || true
+          echo "$BR" > testlog/branch.txt
       - name: Save the test log
         if: always()
         run: |
