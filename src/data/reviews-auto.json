@@ -12,7 +12,9 @@
       "author": "이*림",
       "place": "클래스콕 수원점",
       "store": "suwon",
-      "photos": []
+      "photos": [
+        "/reviews/auto/classkok-L260831722-5095-1.webp"
+      ]
     },
     {
       "id": "classkok-L260831714-5087",
@@ -25,7 +27,9 @@
       "author": "황*솜",
       "place": "클래스콕 수원점",
       "store": "suwon",
-      "photos": []
+      "photos": [
+        "/reviews/auto/classkok-L260831714-5087-1.webp"
+      ]
     },
     {
       "id": "classkok-L260831714-5069",
@@ -38,7 +42,9 @@
       "author": "주*우",
       "place": "클래스콕 수원점",
       "store": "suwon",
-      "photos": []
+      "photos": [
+        "/reviews/auto/classkok-L260831714-5069-1.webp"
+      ]
     },
     {
       "id": "classkok-L260827415-5097",
@@ -51,7 +57,10 @@
       "author": "최*정",
       "place": "클래스콕 파주운정점",
       "store": "unjeong",
-      "photos": []
+      "photos": [
+        "/reviews/auto/classkok-L260827415-5097-1.webp",
+        "/reviews/auto/classkok-L260827415-5097-2.webp"
+      ]
     },
     {
       "id": "classkok-L261001070-5092",
@@ -64,7 +73,9 @@
       "author": "이*선",
       "place": "클래스콕 파주운정점",
       "store": "unjeong",
-      "photos": []
+      "photos": [
+        "/reviews/auto/classkok-L261001070-5092-1.webp"
+      ]
     },
     {
       "id": "classkok-L260827418-5084",
@@ -77,7 +88,9 @@
       "author": "김*민",
       "place": "클래스콕 파주운정점",
       "store": "unjeong",
-      "photos": []
+      "photos": [
+        "/reviews/auto/classkok-L260827418-5084-1.webp"
+      ]
     }
   ]
 }

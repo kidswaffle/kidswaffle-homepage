@@ -1,5 +1,6 @@
 name: reviews-publish
 # Review requests that nobody closed within 3 days are published automatically (closing the pull request stops it).
+# Requests with photos (title starts with [사진 확인 필요]) are never published automatically: faces must be checked by a person.
 on:
   schedule:
     - cron: '0 3 * * *' # every day, 12:00 Korea time
@@ -17,10 +18,10 @@ jobs:
     steps:
       - name: Merge requests that waited long enough
         run: |
-          gh pr list --state open --json number,headRefName,createdAt,isDraft > prs.json
+          gh pr list --state open --json number,headRefName,createdAt,isDraft,title > prs.json
           NOW=$(date -u +%s)
           for N in $(jq -r --argjson now "$NOW" --argjson hold "$HOLD_HOURS" \
-            '.[] | select(.headRefName | startswith("reviews/")) | select(.isDraft | not) | select(($now - (.createdAt | fromdateiso8601)) >= ($hold * 3600)) | .number' prs.json | sort -n); do
+            '.[] | select(.headRefName | startswith("reviews/")) | select(.isDraft | not) | select(.title | contains("[사진 확인 필요]") | not) | select(($now - (.createdAt | fromdateiso8601)) >= ($hold * 3600)) | .number' prs.json | sort -n); do
             echo "Publishing pull request #$N"
             gh pr merge "$N" --squash --delete-branch
           done
