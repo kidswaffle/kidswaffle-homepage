@@ -43,7 +43,8 @@ async function storeReviews(browser, store) {
       for (const r of list) {
         out.push({
           id: `classkok-${r.lctrNo}-${r.rvwSrnm}`, source: 'classkok', store: store.key, place: store.place,
-          author: r.mshpNm || '', date: fmtDate(r.rgsttDt), title: clean(r.title), body: clean(r.cntnt), rating: Number(r.begAvg) || null
+          author: r.mshpNm || '', date: fmtDate(r.rgsttDt), title: clean(r.title), body: clean(r.cntnt), rating: Number(r.begAvg) || null,
+          photoUrls: (r.rvwImgAtflList || []).map((i) => i && i.publicUrl).filter(Boolean)
         });
       }
       if (list.length === 0) break;

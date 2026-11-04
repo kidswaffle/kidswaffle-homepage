@@ -17,7 +17,7 @@ jobs:
         with: { ref: main }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm install --no-save --no-package-lock playwright@1.49.1 nodemailer@6.9.16
+      - run: npm install --no-save --no-package-lock playwright@1.49.1 nodemailer@6.9.16 sharp@0.33.5
       - run: npx playwright install --with-deps chromium
       - name: Skip if an earlier request is still waiting
         id: waiting
@@ -37,7 +37,8 @@ jobs:
           git config user.name "reviews-bot"; git config user.email "bot@users.noreply.github.com"
           BR="reviews/$(date -u +%Y-%m-%d-%H%M)"
           git checkout -b "$BR"
-          git add src/data/reviews-auto.json
+          sed -i "s#{{REPO}}#${{ github.repository }}#g; s#{{BRANCH}}#$BR#g" pr-body.md
+          git add src/data/reviews-auto.json public/reviews/auto
           git commit -m "$(cat pr-title.txt)"
           git push -u origin "$BR"
           URL=$(gh pr create --base main --head "$BR" --title "$(cat pr-title.txt)" --body-file pr-body.md) || {

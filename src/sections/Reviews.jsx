@@ -43,7 +43,7 @@ const REVIEWS = [
 const ACCENTS = ['var(--kw-coral)', 'var(--kw-yellow)', 'var(--kw-green)', 'var(--kw-sky)'];
 const ALL_REVIEWS = [
   ...REVIEWS,
-  ...AUTO.items.map((r, i) => ({ ...r, accent: ACCENTS[i % ACCENTS.length], photos: [] }))
+  ...AUTO.items.map((r, i) => ({ ...r, accent: ACCENTS[i % ACCENTS.length], photos: r.photos || [] }))
 ].sort((a, b) => b.date.localeCompare(a.date));
 
 function ReviewCard({ r }) {
