@@ -33,7 +33,10 @@ jobs:
           git add src/data/reviews-auto.json
           git commit -m "$(cat pr-title.txt)"
           git push -u origin "$BR"
-          URL=$(gh pr create --base main --head "$BR" --title "$(cat pr-title.txt)" --body-file pr-body.md)
+          URL=$(gh pr create --base main --head "$BR" --title "$(cat pr-title.txt)" --body-file pr-body.md) || {
+            echo "::error::Could not open the approval pull request. Turn on Settings > Actions > General > 'Allow GitHub Actions to create and approve pull requests', or open it by hand: https://github.com/${{ github.repository }}/pull/new/$BR"
+            exit 1
+          }
           echo "PR_URL=$URL" >> "$GITHUB_ENV"
           echo "$URL"
       - name: Email the approval request
